@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Words Picker</title>
+    <link rel="stylesheet" href="user.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+    <div class="login-signup-form">
+        <h2>SIgn in/ Sign up</h2>
+        <div class="toggle-buttons">
+            <button id="loginBtn" onclick="toggleForm('loginForm')">Sign In</button>
+            <button id="signupBtn" onclick="toggleForm('signupForm')">Sign Up</button>
+        </div>
+
+        <div id="signupForm" class="form" style="display:none;">
+            <label for="signupName">Name:</label>
+            <input type="text" id="signupName" name="signupName" value="king" required>
+            <label for="signupEmail">Email:</label>
+            <input type="email" id="signupEmail" name="signupEmail" value="king@gmail.com" required>
+            <label for="signupPassword">Password:</label>
+            <input type="password" id="signupPassword" name="signupPassword" value="12345678" required>
+            <button type="button" onclick="signup()">Sign Up</button>
+        </div>
+
+        <div id="loginForm" class="form">
+            <label for="loginProvider">Provider:</label>
+            <input type="text" id="loginProvider" name="loginProvider" value="native" required>
+            <label for="loginEmail">Email:</label>
+            <input type="email" id="loginEmail" name="loginEmail" value="king@gmail.com" required>
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" name="loginPassword" value="12345678" required>
+            <button type="button" onclick="login()">Sign In</button>
+            <div class="form">
+                <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google"></span> SignIn with Google</a>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="user.js"></script>
+</body>
+</html>
