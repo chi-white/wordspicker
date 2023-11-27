@@ -23,7 +23,7 @@ const insertUser = async (req, res) => {
     try{
         const inputcheck = await signupinputcheck(req.body) ;
         const result = await userModel.insertUser(req.body) ;
-        if(result === "Email exist"){
+        if(result === "Email exist" || result === "Email registered by other authentications"){
             return res.status(403).json({err : result}) ;
         }else{
             return res.status(200).json({data : result}) ;
@@ -41,7 +41,7 @@ const insertUser = async (req, res) => {
 
 const signininputcheck = (data) =>{
     return new Promise((resolve, reject) => {
-      if(data.provider&&data.email&&data.password){
+      if(data.email&&data.password){
         resolve(true) ;
       }else{
         reject("invalid input") ;
@@ -58,7 +58,7 @@ const signinUser = async (req, res) => {
             return res.status(403).json({"err" : result}) ;
         }else{
             res.cookie('token', result.access_token) ; 
-            return res.status(200).json({data : result}) ;
+            return res.status(200).json({data:result}) ;
         }
         
     }catch(err){
@@ -72,38 +72,38 @@ const signinUser = async (req, res) => {
     }
 };
 
-
-const userProfile = (req, res) =>{
-    const token_string = req.headers.authorization ;
-    console.log(req.headers)
-    console.log(token_string) ;
-    if(!token_string){
-        return res.status(401).json({error : 'no token'}) ;
+const googleInsertUser = async (req, res, next) =>{
+  try{
+    const exist = await userModel.googleUserExist(req.user['_json']) ;
+    if (exist === "no exist"){
+      const insert = await userModel.googleUserInsert(req.user['_json']) ;
     }
-    else if (!token_string.startsWith('Bearer ')){
-        console.log('lack of "Bearer "') ;
-        return res.staus(403).json({error : 'lack of "Bearer "'}) ;
+    next() ;
+  }catch(err){
+    if(err === "exist fail"){
+      return res.status(500).json({err : "Check google user exist fail"}) ;
+    }else if (err === "insert fail"){
+      return res.status(500).json({err : "Insert google user fail"}) ;
     }
-    const token = token_string.replace('Bearer ', '') ;
-    jwt.verify(token, process.env.secretKey, (err, decoded) => {
-        if (err) {
-            console.log("can not decode") ;
-          return res.status(403).json({error: "can not decode"});
-        }else{
-          if(decoded.provider&&decoded.name&&decoded.email) {
-                const response = {} ;
-                response.provider = decoded.provider ;
-                response.name = decoded.name ;
-                response.email = decoded.email ;
-                response.picture = decoded.picture ;
-                console.log({data:response}) ;
-                return res.status(200).json({data : response}) ;
-            }else{
-                console.log("wrong jwt") ;
-                return res.status(403).json({error : "wrong jwt"}) ;
-            }
-        }
-    })
+  }
 }
 
-module.exports  = {insertUser, signinUser, userProfile} ;
+const googlelogin = async (req, res) => {
+  try{
+    const secretkey = process.env.JWT_SECRETKEY ;
+    const expired_t = 3600;
+    const userProfile = req.user ;
+    const user = {
+      name : userProfile['_json'].name,
+      email : userProfile['_json'].email,  
+      role : "user",
+      access_expired  : expired_t
+    }
+    const token = jwt.sign(user,secretkey) ;
+    res.cookie('token', token) ;
+    res.redirect('/main.html') ;
+  }catch(err){
+    return res.status(500).json({err : err.message})
+  }
+}
+module.exports  = {insertUser, signinUser, googlelogin, googleInsertUser} ;

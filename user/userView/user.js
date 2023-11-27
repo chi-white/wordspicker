@@ -1,10 +1,4 @@
-const urlParams = new URLSearchParams(window.location.search);
-const googleauth = urlParams.get('googleauth');
-if (googleauth === 'true') {
-    alert('Successfully signed in'); 
-}
-
-function toggleForm(formId) {
+const toggleForm = (formId) => {
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
     const loginBtn = document.getElementById('loginBtn');
@@ -24,7 +18,7 @@ function toggleForm(formId) {
 }
 
 
-async function signup() {
+const signup = async () => {
     try {
         const name = document.getElementById('signupName').value;
         const email = document.getElementById('signupEmail').value;
@@ -32,12 +26,12 @@ async function signup() {
 
         const data = {
             'name': name,
-            'mail': email,
+            'email': email,
             'password': password,
             'provider': 'native'
         };
 
-        const url = process.env.SIGNUP_API;
+        const url = "http://localhost/api/1.0/user/signup";
 
         const response = await fetch(url, {
             method: 'POST',
@@ -60,19 +54,18 @@ async function signup() {
 }
 
 
-async function login() {
+const login = async () => {
     try {
-        const provider = document.getElementById('loginProvider').value;
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
 
         const data = {
-            'provider': provider,
+            'provider': 'native',
             'email': email,
             'password': password
         };
 
-        const loginurl = 'https://kimery.store/api/1.0/user/signin';
+        const loginurl = 'http://localhost/api/1.0/user/login';
         const response = await fetch(loginurl, {
             method: 'POST',
             headers: {
@@ -87,8 +80,7 @@ async function login() {
             alert(responseData.err);
         } else {
             console.log('Success:', responseData);
-            console.log(document.cookie) ;
-            alert("Successfully signed in");
+            window.location.href = 'main.html' ;
         }
     } catch (error) {
         console.error('Error:', error);
