@@ -80,7 +80,6 @@ const login = async () => {
             alert(responseData.err);
         } else {
             console.log('Success:', responseData);
-            alert('ok') ;
             window.location.href = 'main.html' ;
         }
     } catch (error) {

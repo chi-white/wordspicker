@@ -124,11 +124,15 @@ socket.on('answerResponse', (data) => {
     }
 }) ;
 
+const backMain = () => {
+    window.location.href = 'main.html';
+} ;
+
 const backStartMatch = () => {
     gamePage.style.display = 'none' ;
     endPage.style.display = 'none' ;
     startMatchPage.style.display = 'block' ;
-    waitingBlock.style.display = "none" ;
     myScore.textContent = "0" ;
     yourScore.textContent = "0" ;
-}
+    socket.emit('match') ;
+} ;
