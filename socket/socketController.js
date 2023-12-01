@@ -14,7 +14,7 @@ const handleSocketEvents = (io) => {
           const roomName = `room_${user1}_${user2}` ;
           roomWords[roomName] = [
             {english:english[0], chinese: chinese[0]},
-            {english:english[1], chinese: chinese[1]}
+            {english:english[1], chinese: chinese[1]}                     //change to databasse
           ]
           io.to(user1).emit('joinRoom', {roomName : roomName}) ;
           io.to(user2).emit('joinRoom', {roomName : roomName}) ;
@@ -22,6 +22,11 @@ const handleSocketEvents = (io) => {
           waitingUsers.splice(waitingUsers.indexOf(user2), 1) ;
         } 
       });
+
+      /** cancelMatch */
+      socket.on("cancelMatch", () => {
+
+      })
   
       socket.on('joinRoom', (data) => {
         const roomName = data.roomName ;

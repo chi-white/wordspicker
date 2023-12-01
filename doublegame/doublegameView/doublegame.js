@@ -1,8 +1,9 @@
 const socket = io('http://localhost');
 
-var  roomName;
+let  roomName;
 let countdown ;
 let currentEvent ;
+let answerNumber = 0 ;
 const input = document.getElementById('wordsinput') ;
 const yourScore = document.getElementById('yourScore') ;
 const myScore = document.getElementById('myScore') ;
@@ -12,11 +13,17 @@ const endPage = document.getElementById('endPage') ;
 const myScorePlace = document.getElementById('myScorePlace') ;
 const yourScorePlace = document.getElementById('yourScorePlace') ;
 const waitingBlock = document.getElementById('waitingBlock') ;
+const result = document.getElementById('result') ;
+const wordPlace = document.getElementById('wordsdisplay') ;
+const time = document.getElementById("time") ;
+const startMatchButton = document.getElementById("startMatchButton") ;
+const delay = (ms) => {return new Promise((resolve) => setTimeout(resolve, ms))};
 
 const matching = () => {
     console.log('wait for matching') ; 
     socket.emit('match') ;
     waitingBlock.style.display = 'block';
+    startMatchButton.style.display = 'none' ;
 }
 
 socket.on("joinRoom", (data)=>{
@@ -30,17 +37,66 @@ socket.on("matchSucessfully", (data) => {
     gamePage.style.display = "block" ;
     wordsIteration() ;
 }) ;
-const delay = (ms) => {return new Promise((resolve) => setTimeout(resolve, ms))};
 
 const wordsIteration = async() => {
     const array = [0, 1] ;
     for (let i of array) {
-        console.log("wordsIterations", i) ;
-        socket.emit("getWords", { roomName: roomName, index: i });
-        await delay(13000);
+        await new Promise((resolve, reject) => {
+            socket.emit("getWords", { roomName: roomName, index: i });
+            socket.once('getWords', async (data) => {
+                await getWordsHandle(data) ;
+                resolve() ;
+            }) ;
+        })
     }
     goToEnd() ;
 }
+
+const getWordsHandle = async (data) => {
+    answerNumber = 0 ;
+    const roomName = data.roomName ;
+    const index = data.index ;
+    wordPlace.textContent  = data.word ;
+    input.disabled = false ;
+    input.focus();
+    await countdownAndReply(roomName, index) ;
+} ;
+
+/** time counting function */
+const countdownAndReply = (roomName, index) => {
+    return new Promise((resolve) => {
+        countdown = 11;
+        /**consequence is important: 
+        1. firstly remove existed listener
+        2. defind new one
+        3. execute new one
+        if change the consequence, old one would never be deleted
+    */
+        if(currentEvent){
+            console.log('remove event listener') ;
+            input.removeEventListener('keydown', currentEvent) ;
+        } ;
+        currentEvent = (event) => {handleEnterKey(event, roomName, index)};
+        input.addEventListener('keydown', currentEvent);
+
+        const countdownTimer = setInterval(() => {
+            countdown--;
+            if(answerNumber === 2){
+                countdown = 0 ;
+                answerNumber = 0 ;
+            }else if (countdown === 0) {
+                input.disabled = true ;
+                time.textContent = time.textContent ;
+            }else if(countdown <= -4){
+                countdown = 10 ;
+                clearInterval(countdownTimer);  
+                resolve() ;
+            }else if(countdown > 0){
+                time.textContent = countdown ;
+            }
+        }, 1000) ;
+    })
+} ;
 
 const goToEnd = () => {
     myScorePlace.textContent = myScore.textContent ;
@@ -48,6 +104,15 @@ const goToEnd = () => {
     startMatchPage.style.display = 'none' ;
     gamePage.style.display = 'none' ;
     endPage.style.display = 'block' ;
+    const myfinal = parseInt(myScore.textContent, 10);
+    const yourfinal = parseInt(yourScore.textContent, 10);
+    if(myfinal >  yourfinal){
+        result.textContent = "I win" ;
+    }else if(myfinal ===  yourfinal){
+        result.textContent = "Draw" ;
+    }else{
+        result.textContent = "I lose" ;
+    }
 }
 
 /** time enter to send message function */
@@ -56,53 +121,14 @@ const handleEnterKey = (event, roomName, index) => {
         const inputValue = input.value ;
         input.value = "" ;
         input.disabled = true ;
-        console.log("handleRnterKey", index) ;
         socket.emit("sendAnswer", {answer: inputValue, roomName : roomName, index:index, score:countdown*10}) ;
         console.log('remove event listener') ;
         input.removeEventListener('keydown', currentEvent);
     }
 } ;
 
-/** time counting function */
-
-const startCountdown = () => {
-    countdown = 10;
-    const time = document.getElementById("time") ;
-    const countdownTimer = setInterval(() => {
-        countdown--;
-        time.textContent = countdown ;
-        if (countdown <= 0) {
-            clearInterval(countdownTimer);
-            input.disabled = true;
-        }
-    }, 1000);
-} ;
-
-socket.on('getWords', (data) =>{
-    const wordPlace = document.getElementById('wordsdisplay') ;
-    const roomName = data.roomName ;
-    const index = data.index ;
-    wordPlace.textContent  = data.word ;
-    input.disabled = false ;
-    input.focus();
-    startCountdown() ;
-    console.log("getWords", index) ;
-
-    /**consequence is important: 
-      1. firstly remove existed listener
-      2. defind new one
-      3. execute new one
-      if change the consequence, old one would never be deleted
-     */
-    if(currentEvent){
-        console.log('remove event listener') ;
-        input.removeEventListener('keydown', currentEvent) ;
-    } ;
-    currentEvent = (event) => {handleEnterKey(event, roomName, index)};
-    input.addEventListener('keydown', currentEvent);
-}) ;
-
 socket.on('answerResponse', (data) => {
+    answerNumber += 1 ;
     if(data.id === socket.id){ 
         if(data.answer === true){
             console.log(`${data.id} wins point`) ;
@@ -136,3 +162,7 @@ const backStartMatch = () => {
     yourScore.textContent = "0" ;
     socket.emit('match') ;
 } ;
+
+const cancelMatch = () => {
+    socket.emit("c") ;
+}

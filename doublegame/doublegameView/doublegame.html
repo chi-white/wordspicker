@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="doublegame.css">
-  <title>Double Game</title>
+  <title>Words Picker</title>
 </head>
 <body>
 
@@ -13,6 +13,7 @@
   <div id="waitingBlock" style="display: none;">
     <p>等待中...</p>
   </div>
+  <button id="cancelMatch" onclick="cancelMatch()">Cancel</button>
 </div>
 
 <div id="gamePage" style="display: none;">
@@ -25,11 +26,11 @@
 
 <div id="endPage" style="display: none">
   <div class="container">
+  <div id="result"></div>
   <div class="score">
     <p>My Score</p>
     <p id="myScorePlace"></p>
   </div>
-
   <div class="score">
     <p>Your Score</p>
     <p id="yourScorePlace"></p>
