@@ -1,6 +1,5 @@
 const userModel = require('./userModel'); 
 const jwt = require('jsonwebtoken');
-const cookie = require('cookie') ;
 require('dotenv').config();
 
 const signupinputcheck = (data) => {

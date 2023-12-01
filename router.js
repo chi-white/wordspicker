@@ -1,11 +1,17 @@
 const express = require('express');
 const http = require('http');
+const socketIo = require('socket.io');
+
 const app = express();
 const server = http.createServer(app);
-const port = 2000;
+const io = socketIo(server);
+
+const PORT = 3000;
 
 app.use(express.json());
 
+/**------------token------------- */
+const {checkJwtToken, checkAuth} = require('./token/tokenController') ;
 /**------------user-------------- */
 const userController = require('./user/userController') ;
 const {insertUser, signinUser} = userController ;
@@ -13,8 +19,9 @@ const {insertUser, signinUser} = userController ;
 app.post('/user/signup', insertUser) ;
 app.post('/user/login', signinUser) ;
 
-app.use(express.static('user/userView')) ;
 app.get('/user/user.html', (req, res) => {res.redirect('/user.html');});
+app.use(express.static('user/userView')) ;
+
 
 
 /**- google third part login----- */
@@ -26,8 +33,8 @@ app.use(session({
     saveUninitialized: true,
     secret: 'SECRET' 
   }));
-  app.use(passport.initialize());
-  app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
 
@@ -42,10 +49,13 @@ app.get('/success', googleInsertUser, googlelogin);
   app.get('/error', (req, res) => res.send("error logging in"));
 
 /**----------- main page------------ */
+app.get('/main.html', checkJwtToken, checkAuth("main_html")) ;
 app.use(express.static('main/mainView')) ;
+
+
 app.use(express.static('doublegame/doublegameView')) ;
 
 /**------------server-------------- */
-server.listen(3000, () => {
-    console.log('Server is running on port 3000');
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });

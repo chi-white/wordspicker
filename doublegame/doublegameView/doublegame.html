@@ -8,13 +8,18 @@
 </head>
 <body>
   <div id="game">
-    <div id="options">
-      <button onclick="submitAnswer('Option 1')">Option 1</button>
-      <button onclick="submitAnswer('Option 2')">Option 2</button>
-      <button onclick="submitAnswer('Option 3')">Option 3</button>
-    </div>
-    <div id="countdown"></div>
-    <div id="result"></div>
+    <label for="categorySelect">Select Category : </label>
+    <select id="categorySelect">
+      <option value="test">test</option>
+      <option value="toefl">toefl</option>
+  </select>
+  <label for="chapterSelect">Select Chapter : </label>
+    <select id="chapterSelect">
+      <option value="ch1">1</option>
+      <option value="ch2">2</option>
+      <option value="all">all</option>
+  </select>
+    <!-- <button id="sure" onclick=""> Sure </button> -->
   </div>
   <!-- <script src="client.js"></script> -->
 </body>
