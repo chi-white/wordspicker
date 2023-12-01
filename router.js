@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const handleSocketEvents = require('./socket/socketController');
 
 const app = express();
 const server = http.createServer(app);
@@ -52,9 +53,9 @@ app.get('/success', googleInsertUser, googlelogin);
 app.get('/main.html', checkJwtToken, checkAuth("main_html")) ;
 app.use(express.static('main/mainView')) ;
 
-
+/**-------------doublegame----------- */
 app.use(express.static('doublegame/doublegameView')) ;
-
+handleSocketEvents(io) ;
 /**------------server-------------- */
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

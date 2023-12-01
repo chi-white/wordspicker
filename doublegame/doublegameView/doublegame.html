@@ -4,23 +4,44 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="doublegame.css">
-  <title>WebSocket Game</title>
+  <title>Double Game</title>
 </head>
 <body>
-  <div id="game">
-    <label for="categorySelect">Select Category : </label>
-    <select id="categorySelect">
-      <option value="test">test</option>
-      <option value="toefl">toefl</option>
-  </select>
-  <label for="chapterSelect">Select Chapter : </label>
-    <select id="chapterSelect">
-      <option value="ch1">1</option>
-      <option value="ch2">2</option>
-      <option value="all">all</option>
-  </select>
-    <!-- <button id="sure" onclick=""> Sure </button> -->
+
+<div id="startMatchPage">
+  <button id="startMatchButton" onclick="matching()">Start Match</button>
+  <div id="waitingBlock" style="display: none;">
+    <p>等待中...</p>
   </div>
-  <!-- <script src="client.js"></script> -->
+</div>
+
+<div id="gamePage" style="display: none;">
+  <div id="wordsdisplay">ok</div>
+  <div id="time"></div>
+  <div id="myScore">0</div>
+  <div id="yourScore">0</div>
+  <input id="wordsinput" placeholder="type">
+</div>
+
+<div id="endPage" style="display: none">
+  <div class="container">
+  <div class="score">
+    <p>My Score</p>
+    <p id="myScorePlace"></p>
+  </div>
+
+  <div class="score">
+    <p>Your Score</p>
+    <p id="yourScorePlace"></p>
+  </div>
+
+  <button id ="backStartMatchPage" class="button" onclick="backStartMatch()">Back</button>
+</div>
+
+
+
+<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+<script src="doublegame.js"></script>
+
 </body>
 </html>
