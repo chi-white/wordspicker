@@ -17,6 +17,7 @@ const result = document.getElementById('result') ;
 const wordPlace = document.getElementById('wordsdisplay') ;
 const time = document.getElementById("time") ;
 const startMatchButton = document.getElementById("startMatchButton") ;
+const cancelMatchButton = document.getElementById('cancelMatch') ;
 const delay = (ms) => {return new Promise((resolve) => setTimeout(resolve, ms))};
 
 const matching = () => {
@@ -24,6 +25,7 @@ const matching = () => {
     socket.emit('match') ;
     waitingBlock.style.display = 'block';
     startMatchButton.style.display = 'none' ;
+    cancelMatchButton.style.display = 'block' ;
 }
 
 socket.on("joinRoom", (data)=>{
@@ -164,5 +166,11 @@ const backStartMatch = () => {
 } ;
 
 const cancelMatch = () => {
-    socket.emit("c") ;
+    socket.emit("cancelMatch") ;
 }
+
+socket.on("cancelMatch", () => {
+    cancelMatchButton.style.display = "none" ;
+    waitingBlock.style.display = 'none' ;
+    startMatchButton.style.display = 'block' ;
+})

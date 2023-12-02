@@ -14,7 +14,7 @@ const handleSocketEvents = (io) => {
           const roomName = `room_${user1}_${user2}` ;
           roomWords[roomName] = [
             {english:english[0], chinese: chinese[0]},
-            {english:english[1], chinese: chinese[1]}                     //change to databasse
+            {english:english[1], chinese: chinese[1]}                     //change to database
           ]
           io.to(user1).emit('joinRoom', {roomName : roomName}) ;
           io.to(user2).emit('joinRoom', {roomName : roomName}) ;
@@ -23,9 +23,15 @@ const handleSocketEvents = (io) => {
         } 
       });
 
-      /** cancelMatch */
-      socket.on("cancelMatch", () => {
 
+      socket.on("cancelMatch", () => {
+        const index = waitingUsers.indexOf(socket.id) ;
+        if(index !== -1) {
+          waitingUsers.splice(index, 1) ;
+        }else{
+          console.log("element not found") ;
+        }
+        io.to(socket.id).emit("cancelMatch") ;
       })
   
       socket.on('joinRoom', (data) => {
