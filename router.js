@@ -1,7 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const handleSocketEvents = require('./socket/socketController');
+const handleSocketEvents = require('./doublegame/doublegameController');
 
 const app = express();
 const server = http.createServer(app);
