@@ -9,11 +9,24 @@
 <body>
 
 <div id="startMatchPage">
+  <label for="subCategory">Category:</label>
+    <select id="category" onchange="updateCategory()">
+      <option value="">Please select</option>
+      <option value="test">test</option>
+      <option value="toefl">toefl</option>
+    </select>
+  <label for="chapter">Chapter:</label>
+    <select id="chapter" disabled>
+        <option value="">Please choose category</option>
+    </select>
   <button id="startMatchButton" onclick="matching()">Start Match</button>
-  <div id="waitingBlock" style="display: none;">
+</div>
+
+<div id="waitingPage" style="display: none;">
+  <div id="waitingBlock">
     <p>等待中...</p>
   </div>
-  <button id="cancelMatch" onclick="cancelMatch()" style="display: none;">Cancel</button>
+  <button id="cancelMatch" onclick="cancelMatch()">Cancel</button>
 </div>
 
 <div id="gamePage" style="display: none;">

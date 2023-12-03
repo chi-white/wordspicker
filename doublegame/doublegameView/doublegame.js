@@ -10,6 +10,7 @@ const myScore = document.getElementById('myScore') ;
 const startMatchPage = document.getElementById('startMatchPage') ;
 const gamePage = document.getElementById('gamePage');
 const endPage = document.getElementById('endPage') ;
+const waitingPage = document.getElementById("waitingPage") ;
 const myScorePlace = document.getElementById('myScorePlace') ;
 const yourScorePlace = document.getElementById('yourScorePlace') ;
 const waitingBlock = document.getElementById('waitingBlock') ;
@@ -18,14 +19,15 @@ const wordPlace = document.getElementById('wordsdisplay') ;
 const time = document.getElementById("time") ;
 const startMatchButton = document.getElementById("startMatchButton") ;
 const cancelMatchButton = document.getElementById('cancelMatch') ;
+const categorySelect = document.getElementById("category");
+const chapterSelect = document.getElementById("chapter");
 const delay = (ms) => {return new Promise((resolve) => setTimeout(resolve, ms))};
 
 const matching = () => {
     console.log('wait for matching') ; 
     socket.emit('match') ;
-    waitingBlock.style.display = 'block';
-    startMatchButton.style.display = 'none' ;
-    cancelMatchButton.style.display = 'block' ;
+    startMatchPage.style.display = "none" ;
+    waitingPage.style.display = "block" ;
 }
 
 socket.on("joinRoom", (data)=>{
@@ -34,8 +36,7 @@ socket.on("joinRoom", (data)=>{
 
 socket.on("matchSucessfully", (data) => {
     roomName = data.roomName ;
-    startMatchPage.style.display = "none" ;
-    endPage.style.display = 'none' ;
+    waitingPage.style.display = 'none' ;
     gamePage.style.display = "block" ;
     wordsIteration() ;
 }) ;
@@ -103,7 +104,6 @@ const countdownAndReply = (roomName, index) => {
 const goToEnd = () => {
     myScorePlace.textContent = myScore.textContent ;
     yourScorePlace.textContent = yourScore.textContent ;
-    startMatchPage.style.display = 'none' ;
     gamePage.style.display = 'none' ;
     endPage.style.display = 'block' ;
     const myfinal = parseInt(myScore.textContent, 10);
@@ -157,9 +157,8 @@ const backMain = () => {
 } ;
 
 const backStartMatch = () => {
-    gamePage.style.display = 'none' ;
     endPage.style.display = 'none' ;
-    startMatchPage.style.display = 'block' ;
+    waitingPage.style.display = 'block' ;
     myScore.textContent = "0" ;
     yourScore.textContent = "0" ;
     socket.emit('match') ;
@@ -170,7 +169,31 @@ const cancelMatch = () => {
 }
 
 socket.on("cancelMatch", () => {
-    cancelMatchButton.style.display = "none" ;
-    waitingBlock.style.display = 'none' ;
-    startMatchButton.style.display = 'block' ;
+    waitingPage.style.display = "none" ;
+    startMatchPage.style.display = "block" ;
 })
+
+const updateCategory = () => {
+    chapterSelect.innerHTML = "" ;
+
+    if (categorySelect.value === ""){
+        chapterSelect.disabled = true ;
+    }else{
+        chapterSelect.disabled = false ;
+        var backendData = getSubcategoriesFromBackend(categorySelect.value);
+        for (var i = 0; i < backendData.length; i++) {
+            var option = document.createElement("option");
+            option.value = backendData[i];
+            option.text = backendData[i];
+            chapterSelect.add(option);
+        }
+    }
+}
+
+const getSubcategoriesFromBackend = (category) => {
+    var dataMap = {
+        "test": ["1", "2", "3", "all"],
+        "toefl": ["1", "2", "3", "4", "5", "6", "all"]
+    };
+    return dataMap[category] || [];
+}
