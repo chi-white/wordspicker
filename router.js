@@ -1,7 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const handleSocketEvents = require('./doublegame/doublegameController');
+const {handleSocketEvents} = require('./doublegame/doublegameController');
 
 const app = express();
 const server = http.createServer(app);
@@ -56,6 +56,10 @@ app.use(express.static('main/mainView')) ;
 /**-------------doublegame----------- */
 app.use(express.static('doublegame/doublegameView')) ;
 handleSocketEvents(io) ;
+
+
+const {getChapter} = require('./doublegame/doublegameController');
+app.get('/getchapter', getChapter) ;
 /**------------server-------------- */
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

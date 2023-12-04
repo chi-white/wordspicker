@@ -21,13 +21,16 @@ const startMatchButton = document.getElementById("startMatchButton") ;
 const cancelMatchButton = document.getElementById('cancelMatch') ;
 const categorySelect = document.getElementById("category");
 const chapterSelect = document.getElementById("chapter");
-const delay = (ms) => {return new Promise((resolve) => setTimeout(resolve, ms))};
 
 const matching = () => {
-    console.log('wait for matching') ; 
-    socket.emit('match') ;
-    startMatchPage.style.display = "none" ;
-    waitingPage.style.display = "block" ;
+    if(categorySelect.value === "" || chapterSelect.value === ""){
+        alert("Please choose Chapter") ;
+    }else{
+        console.log('wait for matching') ; 
+        socket.emit('match') ;
+        startMatchPage.style.display = "none" ;
+        waitingPage.style.display = "block" ;
+    }
 }
 
 socket.on("joinRoom", (data)=>{
@@ -173,27 +176,27 @@ socket.on("cancelMatch", () => {
     startMatchPage.style.display = "block" ;
 })
 
-const updateCategory = () => {
+const updateCategory = async() => {
     chapterSelect.innerHTML = "" ;
-
     if (categorySelect.value === ""){
         chapterSelect.disabled = true ;
+
     }else{
         chapterSelect.disabled = false ;
-        var backendData = getSubcategoriesFromBackend(categorySelect.value);
-        for (var i = 0; i < backendData.length; i++) {
+        const url = `http://localhost/getChapter?category=${categorySelect.value}` ;
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'},
+        });
+        const responseFrame = await response.json() ;
+        const responseData = responseFrame.data ;
+        for (var i = 0; i < responseData.length; i++) {
             var option = document.createElement("option");
-            option.value = backendData[i];
-            option.text = backendData[i];
+            option.value = responseData[i].chapter;
+            option.text = responseData[i].chapter;
             chapterSelect.add(option);
         }
     }
 }
 
-const getSubcategoriesFromBackend = (category) => {
-    var dataMap = {
-        "test": ["1", "2", "3", "all"],
-        "toefl": ["1", "2", "3", "4", "5", "6", "all"]
-    };
-    return dataMap[category] || [];
-}
+

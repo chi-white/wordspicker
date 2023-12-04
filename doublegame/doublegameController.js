@@ -1,3 +1,5 @@
+const doubleGameModel = require('./doublegameModel') ;
+
 const handleSocketEvents = (io) => {
     const waitingUsers = [] ;
     const english = ['apple', 'banana'] ;
@@ -69,5 +71,16 @@ const handleSocketEvents = (io) => {
         return shuffled.slice(0, 2);
     }
   }
+
+const getChapter = async(req, res) => {
+  try {
+    const category = req.query.category;
+    const result = await doubleGameModel.getChapter(category) ;
+    return res.status(200).json({data:result}) ;
+  }catch(err){
+    console.log("getChapter fail") ;
+    return res.status(500).json({err:err})
+  }
+}
   
-  module.exports = handleSocketEvents;
+  module.exports = {handleSocketEvents, getChapter};
