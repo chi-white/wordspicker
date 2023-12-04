@@ -54,6 +54,7 @@ app.get('/main.html', checkJwtToken, checkAuth("main_html")) ;
 app.use(express.static('main/mainView')) ;
 
 /**-------------doublegame----------- */
+app.get('/doublegame.html', checkJwtToken, checkAuth("doublegame_html")) ;
 app.use(express.static('doublegame/doublegameView')) ;
 handleSocketEvents(io) ;
 

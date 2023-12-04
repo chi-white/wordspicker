@@ -16,7 +16,7 @@
       <option value="toefl">toefl</option>
     </select>
   <label for="chapter">Chapter:</label>
-    <select id="chapter" disabled multiple>
+    <select id="chapter" disabled>
         <option value="">Please choose category</option>
     </select>
   <button id="startMatchButton" onclick="matching()">Start Match</button>
@@ -48,8 +48,9 @@
     <p>Your Score</p>
     <p id="yourScorePlace"></p>
   </div>
-  <button id="backMainPage" class="button" onclick="backMain()">Back</button>
-  <button id ="backStartMatchPage" class="button" onclick="backStartMatch()">Rematch</button>
+  <button id="backMainPage" class="button" onclick="backMain()">Back to Main</button>
+  <button id="backStartMatchPage" class="button" onclick="backStartMatch()">Start Match</button>
+  <button id ="backWaitingPage" class="button" onclick="backWaiting()">Rematch</button>
 </div>
 
 

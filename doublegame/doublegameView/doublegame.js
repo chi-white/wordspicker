@@ -4,6 +4,7 @@ let  roomName;
 let countdown ;
 let currentEvent ;
 let answerNumber = 0 ;
+const questionNumber = 2 ;
 const input = document.getElementById('wordsinput') ;
 const yourScore = document.getElementById('yourScore') ;
 const myScore = document.getElementById('myScore') ;
@@ -13,7 +14,6 @@ const endPage = document.getElementById('endPage') ;
 const waitingPage = document.getElementById("waitingPage") ;
 const myScorePlace = document.getElementById('myScorePlace') ;
 const yourScorePlace = document.getElementById('yourScorePlace') ;
-const waitingBlock = document.getElementById('waitingBlock') ;
 const result = document.getElementById('result') ;
 const wordPlace = document.getElementById('wordsdisplay') ;
 const time = document.getElementById("time") ;
@@ -24,10 +24,10 @@ const chapterSelect = document.getElementById("chapter");
 
 const matching = () => {
     if(categorySelect.value === "" || chapterSelect.value === ""){
-        alert("Please choose Chapter") ;
+        alert("Please choose category and chapter") ;
     }else{
         console.log('wait for matching') ; 
-        socket.emit('match') ;
+        socket.emit('match', {category: categorySelect.value, chapter: chapterSelect.value}) ;
         startMatchPage.style.display = "none" ;
         waitingPage.style.display = "block" ;
     }
@@ -45,7 +45,7 @@ socket.on("matchSucessfully", (data) => {
 }) ;
 
 const wordsIteration = async() => {
-    const array = [0, 1] ;
+    const array = Array.from({ length: questionNumber}, (_, i) => i);
     for (let i of array) {
         await new Promise((resolve, reject) => {
             socket.emit("getWords", { roomName: roomName, index: i });
@@ -71,7 +71,7 @@ const getWordsHandle = async (data) => {
 /** time counting function */
 const countdownAndReply = (roomName, index) => {
     return new Promise((resolve) => {
-        countdown = 11;
+        countdown = 9;
         /**consequence is important: 
         1. firstly remove existed listener
         2. defind new one
@@ -94,7 +94,7 @@ const countdownAndReply = (roomName, index) => {
                 input.disabled = true ;
                 time.textContent = time.textContent ;
             }else if(countdown <= -4){
-                countdown = 10 ;
+                countdown = 9 ;
                 clearInterval(countdownTimer);  
                 resolve() ;
             }else if(countdown > 0){
@@ -105,6 +105,7 @@ const countdownAndReply = (roomName, index) => {
 } ;
 
 const goToEnd = () => {
+    socket.emit("deleteRecord", {roomName:roomName}) ;
     myScorePlace.textContent = myScore.textContent ;
     yourScorePlace.textContent = yourScore.textContent ;
     gamePage.style.display = 'none' ;
@@ -159,13 +160,20 @@ const backMain = () => {
     window.location.href = 'main.html';
 } ;
 
-const backStartMatch = () => {
+const backWaiting = () => {
     endPage.style.display = 'none' ;
     waitingPage.style.display = 'block' ;
     myScore.textContent = "0" ;
     yourScore.textContent = "0" ;
-    socket.emit('match') ;
+    socket.emit('match', {category: categorySelect.value, chapter: chapterSelect.value}) ;
 } ;
+
+const backStartMatch = () => {
+    endPage.style.display = 'none' ;
+    startMatchPage.style.display = 'block' ;
+    myScore.textContent = "0" ;
+    yourScore.textContent = "0" ;
+}
 
 const cancelMatch = () => {
     socket.emit("cancelMatch") ;
@@ -174,7 +182,7 @@ const cancelMatch = () => {
 socket.on("cancelMatch", () => {
     waitingPage.style.display = "none" ;
     startMatchPage.style.display = "block" ;
-})
+}) ;
 
 const updateCategory = async() => {
     chapterSelect.innerHTML = "" ;
@@ -198,5 +206,10 @@ const updateCategory = async() => {
         }
     }
 }
+
+socket.on('err', (data) => {
+    alert(data.err) ;
+    console.log(data.err) ;
+}) ;
 
 

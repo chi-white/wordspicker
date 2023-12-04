@@ -1,33 +1,63 @@
 const doubleGameModel = require('./doublegameModel') ;
 
+const questionNumber = 2 ;
+
 const handleSocketEvents = (io) => {
     const waitingUsers = [] ;
     const english = ['apple', 'banana'] ;
     const chinese = ["蘋果", "香蕉"] ;
     const roomWords = {} ;
+    const roomQuestionType = {} ;
     io.on('connection', (socket) => {
       console.log('user connection');
 
-      socket.on('match', () => {
+      const getRandomElement = (questionNumber) => {
+        let p ;
+        const array = [] ;
+        for (let i=0; i<questionNumber; i++){
+          p = Math.random();
+          if(p < 0.5){
+            array.push("EtoC") ;
+          }else{
+            array.push("CtoE") ;
+          }
+        }
+        return array ;
+      }
+
+      socket.on('match', async (data) => {
         console.log(`${socket.id}, server receive match request`);
-        waitingUsers.push(socket.id) ;
-        if(waitingUsers.length >= 2){
-          const [user1, user2] = getRandomPair(waitingUsers) ;
-          const roomName = `room_${user1}_${user2}` ;
-          roomWords[roomName] = [
-            {english:english[0], chinese: chinese[0]},
-            {english:english[1], chinese: chinese[1]}                     //change to database
-          ]
-          io.to(user1).emit('joinRoom', {roomName : roomName}) ;
-          io.to(user2).emit('joinRoom', {roomName : roomName}) ;
-          waitingUsers.splice(waitingUsers.indexOf(user1), 1) ;
-          waitingUsers.splice(waitingUsers.indexOf(user2), 1) ;
+        waitingUsers.push({id:socket.id, category: data.category, chapter: data.chapter}) ;
+        const myIndex = waitingUsers.findIndex(user => user.id === socket.id) ;
+        for(let i=0; i<waitingUsers.length - 1; i++){
+          if(i != myIndex){
+            if(waitingUsers[i].category === data.category && waitingUsers[i].chapter === data.chapter){
+              const user1 = waitingUsers[myIndex].id ;
+              const user2 = waitingUsers[i].id ;
+              try{
+                console.log(waitingUsers) ;
+                console.log(myIndex) ;
+                const roomName = `room_${user1}_${user2}` ;
+                roomQuestionType[roomName] = getRandomElement(questionNumber) ;
+                roomWords[roomName] = await doubleGameModel.getWords(category, chapter, questionNumber) ;
+                console.log(roomWords[roomName]) ;
+                io.to(user1).emit('joinRoom', {roomName : roomName}) ;
+                io.to(user2).emit('joinRoom', {roomName : roomName}) ;
+                waitingUsers.splice(Math.max(i, myIndex), 1) ;
+                waitingUsers.splice(Math.min(i, myIndex), 1) ;
+                break ;
+              }catch(err){
+                io.to(user1).emit("err", {err: err}) ;
+                io.to(user2).emit("err", {err: err}) ;
+              }
+            }
+          }
         } 
       });
 
 
       socket.on("cancelMatch", () => {
-        const index = waitingUsers.indexOf(socket.id) ;
+        const index = waitingUsers.findIndex(user => user.id === socket.id) ;
         if(index !== -1) {
           waitingUsers.splice(index, 1) ;
         }else{
@@ -44,6 +74,8 @@ const handleSocketEvents = (io) => {
 
       socket.on('disconnect', () => {
         console.log('user disconnection');
+        const index = waitingUsers.findIndex(user => user.id === socket.id) ;
+        waitingUsers.splice(index, 1) ;
       });
   
       socket.on('getWords', (data) => {
@@ -52,24 +84,27 @@ const handleSocketEvents = (io) => {
         io.to(socket.id).emit('getWords', {word:roomWords[roomName][index].english, roomName: roomName, index:index}) ; //change to database
       }) ;
 
-      socket.on('sendAnswer', (data) => {
+      socket.on('sendAnswer', async (data) => {
         const roomName = data.roomName ;
         const index = data.index ;
         const score = data.score ;
-        if (data.answer === roomWords[roomName][index].chinese){         //change to database
+        if ( data.answer === roomWords[roomName][index].chinese){         //change to database
           io.to(data.roomName).emit('answerResponse', {answer:true, id: socket.id, score:score}) ;
         }else{
           io.to(data.roomName).emit('answerResponse', {answer:false, id: socket.id}) ;
         }
       }) ;
+
+      socket.on("deleteRecord", (data) => {
+        const roomName = data.roomName ;
+        if(roomName in roomWords){
+          delete roomWords[roomName] ;
+        }
+        if(roomName in roomQuestionType){
+          delete roomQuestionType[roomName] ;
+        }
+      }) ;
     });
-
-    
-
-    const getRandomPair = (array) => {
-        const shuffled = array.sort(() => 0.5 - Math.random()); 
-        return shuffled.slice(0, 2);
-    }
   }
 
 const getChapter = async(req, res) => {
