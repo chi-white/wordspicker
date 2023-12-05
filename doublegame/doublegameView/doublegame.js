@@ -46,10 +46,12 @@ socket.on("matchSucessfully", (data) => {
 
 const wordsIteration = async() => {
     const array = Array.from({ length: questionNumber}, (_, i) => i);
+    
     for (let i of array) {
         await new Promise((resolve, reject) => {
             socket.emit("getWords", { roomName: roomName, index: i });
             socket.once('getWords', async (data) => {
+                console.log(data.word) ;
                 await getWordsHandle(data) ;
                 input.value = "" ;
                 resolve() ;
@@ -72,7 +74,7 @@ const getWordsHandle = async (data) => {
 /** time counting function */
 const countdownAndReply = (roomName, index) => {
     return new Promise((resolve) => {
-        countdown = 9;
+        countdown = 12;
         /**consequence is important: 
         1. firstly remove existed listener
         2. defind new one
@@ -80,7 +82,6 @@ const countdownAndReply = (roomName, index) => {
         if change the consequence, old one would never be deleted
     */
         if(currentEvent){
-            console.log('remove event listener') ;
             input.removeEventListener('keydown', currentEvent) ;
         } ;
         currentEvent = (event) => {handleEnterKey(event, roomName, index)};
@@ -95,7 +96,7 @@ const countdownAndReply = (roomName, index) => {
                 input.disabled = true ;
                 time.textContent = time.textContent ;
             }else if(countdown <= -4){
-                countdown = 9 ;
+                countdown = 12 ;
                 clearInterval(countdownTimer);  
                 resolve() ;
             }else if(countdown > 0){

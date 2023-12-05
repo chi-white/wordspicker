@@ -78,14 +78,14 @@ const handleSocketEvents = (io) => {
         waitingUsers.splice(index, 1) ;
       });
   
-      socket.on('getWords', (data) => {
+      socket.on('getWords', async (data) => {
         const roomName = data.roomName ;
         const index = data.index ;
         if(roomQuestionType[roomName][index] === "EtoC"){
           io.to(socket.id).emit('getWords', {word:roomWords[roomName][index].english, roomName: roomName, index:index}) ;
         }else{
           const question = roomWords[roomName][index].chinese.split('；');
-          const randomIndex = Math.floor(Math.random() * (question.length + 0.99));
+          const randomIndex = Math.floor(Math.random() * (question.length));
           io.to(socket.id).emit('getWords', {word:question[randomIndex], roomName: roomName, index:index}) ;
         }
       }) ;
