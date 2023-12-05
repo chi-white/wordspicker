@@ -40,8 +40,7 @@ app.use(passport.session());
 app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
 
 app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/error' }),
-  (req, res) => {
+  passport.authenticate('google', { failureRedirect: '/error' }),(req, res) => {
     res.redirect('/success');
 });
 

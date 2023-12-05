@@ -51,6 +51,7 @@ const wordsIteration = async() => {
             socket.emit("getWords", { roomName: roomName, index: i });
             socket.once('getWords', async (data) => {
                 await getWordsHandle(data) ;
+                input.value = "" ;
                 resolve() ;
             }) ;
         })
@@ -206,10 +207,8 @@ const updateCategory = async() => {
         }
     }
 }
-
-socket.on('err', (data) => {
-    alert(data.err) ;
-    console.log(data.err) ;
+socket.on('err', (err) => {
+    console.log(err.err) ;
 }) ;
 
 

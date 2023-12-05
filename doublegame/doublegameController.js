@@ -35,12 +35,11 @@ const handleSocketEvents = (io) => {
               const user1 = waitingUsers[myIndex].id ;
               const user2 = waitingUsers[i].id ;
               try{
-                console.log(waitingUsers) ;
-                console.log(myIndex) ;
                 const roomName = `room_${user1}_${user2}` ;
                 roomQuestionType[roomName] = getRandomElement(questionNumber) ;
-                roomWords[roomName] = await doubleGameModel.getWords(category, chapter, questionNumber) ;
-                console.log(roomWords[roomName]) ;
+                roomWords[roomName] = await doubleGameModel.getWords(data.category, data.chapter, questionNumber) ;
+                console.log("haha", roomWords[roomName]) ;
+                console.log("haha", roomQuestionType[roomName]) ;
                 io.to(user1).emit('joinRoom', {roomName : roomName}) ;
                 io.to(user2).emit('joinRoom', {roomName : roomName}) ;
                 waitingUsers.splice(Math.max(i, myIndex), 1) ;
@@ -49,6 +48,7 @@ const handleSocketEvents = (io) => {
               }catch(err){
                 io.to(user1).emit("err", {err: err}) ;
                 io.to(user2).emit("err", {err: err}) ;
+                console.log(err) ;
               }
             }
           }
@@ -81,18 +81,35 @@ const handleSocketEvents = (io) => {
       socket.on('getWords', (data) => {
         const roomName = data.roomName ;
         const index = data.index ;
-        io.to(socket.id).emit('getWords', {word:roomWords[roomName][index].english, roomName: roomName, index:index}) ; //change to database
+        if(roomQuestionType[roomName][index] === "EtoC"){
+          io.to(socket.id).emit('getWords', {word:roomWords[roomName][index].english, roomName: roomName, index:index}) ;
+        }else{
+          const question = roomWords[roomName][index].chinese.split('；');
+          const randomIndex = Math.floor(Math.random() * (question.length + 0.99));
+          io.to(socket.id).emit('getWords', {word:question[randomIndex], roomName: roomName, index:index}) ;
+        }
       }) ;
 
       socket.on('sendAnswer', async (data) => {
         const roomName = data.roomName ;
         const index = data.index ;
         const score = data.score ;
-        if ( data.answer === roomWords[roomName][index].chinese){         //change to database
-          io.to(data.roomName).emit('answerResponse', {answer:true, id: socket.id, score:score}) ;
+        console.log(`${socket.id} send answer ${data.answer}`) ;
+        if(roomQuestionType[roomName][index] === "EtoC"){
+          const answer = roomWords[roomName][index].chinese.split('；');
+          if (answer.includes(data.answer)){         
+            io.to(data.roomName).emit('answerResponse', {answer:true, id: socket.id, score:score}) ;
+          }else{
+            io.to(data.roomName).emit('answerResponse', {answer:false, id: socket.id}) ;
+          }
         }else{
-          io.to(data.roomName).emit('answerResponse', {answer:false, id: socket.id}) ;
+          if ( data.answer === roomWords[roomName][index].english){         
+            io.to(data.roomName).emit('answerResponse', {answer:true, id: socket.id, score:score}) ;
+          }else{
+            io.to(data.roomName).emit('answerResponse', {answer:false, id: socket.id}) ;
+          }
         }
+          
       }) ;
 
       socket.on("deleteRecord", (data) => {
@@ -105,7 +122,7 @@ const handleSocketEvents = (io) => {
         }
       }) ;
     });
-  }
+  } ;
 
 const getChapter = async(req, res) => {
   try {
