@@ -52,14 +52,17 @@ app.get('/success', googleInsertUser, googlelogin);
 app.get('/main.html', checkJwtToken, checkAuth("main_html")) ;
 app.use(express.static('main/mainView')) ;
 
+const {getChapter} = require('./doublegame/doublegameController');
+app.get('/getchapter', getChapter) ;
 /**-------------doublegame----------- */
 app.get('/doublegame.html', checkJwtToken, checkAuth("doublegame_html")) ;
 app.use(express.static('doublegame/doublegameView')) ;
 handleSocketEvents(io) ;
 
+//**------------practice mode------ */
+app.get('/practiceMode.html', checkJwtToken, checkAuth("practicemode_html")) ;
+app.use(express.static('practiceMode/practiceModeView')) ;
 
-const {getChapter} = require('./doublegame/doublegameController');
-app.get('/getchapter', getChapter) ;
 /**------------server-------------- */
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

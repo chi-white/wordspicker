@@ -4,7 +4,7 @@ let  roomName;
 let countdown ;
 let currentEvent ;
 let answerNumber = 0 ;
-const questionNumber = 2 ;
+const questionNumber = 10 ;
 const input = document.getElementById('wordsinput') ;
 const yourScore = document.getElementById('yourScore') ;
 const myScore = document.getElementById('myScore') ;

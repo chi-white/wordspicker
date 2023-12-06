@@ -1,11 +1,9 @@
 const doubleGameModel = require('./doublegameModel') ;
 
-const questionNumber = 2 ;
+const questionNumber = 10 ;
 
 const handleSocketEvents = (io) => {
     const waitingUsers = [] ;
-    const english = ['apple', 'banana'] ;
-    const chinese = ["蘋果", "香蕉"] ;
     const roomWords = {} ;
     const roomQuestionType = {} ;
     io.on('connection', (socket) => {

@@ -1,0 +1,113 @@
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  }
+
+  #flashcardContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .flashcard {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    width: 600px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  .flashcard p {
+    margin: 10px 0;
+  }
+
+  .flashcard-header {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .flashcard-example {
+    margin-top: 20px;
+  }
+
+  .star {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #ffd700;
+    cursor: pointer;
+  }
+
+  .firework-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .firework {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: url('icegif-85.gif') no-repeat;
+    background-size: cover;
+    animation: explode 0.5s ease-out;
+  }
+
+  @keyframes explode {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .banner {
+    background-color: #4CAF50;
+    padding: 10px;
+    text-align: right;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 99%;
+    z-index: 1000; /* 確保 banner 在最上層 */
+  }
+  
+  .banner button {
+    background-color: #f8f8f8;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+  }

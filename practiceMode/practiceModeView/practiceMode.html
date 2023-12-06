@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="practiceMode.css">
+    <title>字卡</title>
+  </head>
+  <body>
+    <div class="banner">
+      <button id="logoutButton" onclick="logout()">Log Out</button>
+    </div>
+
+    <div id="selectPage">
+      <label for="subCategory">Category:</label>
+        <select id="category" onchange="updateCategory()">
+          <option value="">Please select</option>
+          <option value="test">test</option>
+          <option value="toefl">toefl</option>
+        </select>
+      <label for="chapter">Chapter:</label>
+        <select id="chapter" disabled>
+            <option value="">Please choose category</option>
+        </select>
+      <button id="selectButton" onclick="generateFlashcards()">Select Chapter</button>
+    </div>
+
+
+    <div id="wordPage" style="display: none;">
+      <div id="flashcardContainer"></div>
+    </div>
+
+    <script src="practiceMode.js"></script>
+  </body>
+</html>
+
+
+
+
+
+

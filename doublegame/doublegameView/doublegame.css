@@ -47,3 +47,25 @@ button {
   position: absolute;
   top: 50px;
 }
+
+.banner {
+  background-color: #4CAF50;
+  padding: 10px;
+  text-align: right;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 99%;
+  z-index: 1000; /* 確保 banner 在最上層 */
+}
+
+.banner button {
+  background-color: #f8f8f8;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+#startMatchPage {
+  margin-top: 40px; /* 加上一個 margin 以避免被 banner 覆蓋 */
+}
