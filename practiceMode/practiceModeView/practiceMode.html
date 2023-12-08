@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="practiceMode.css">
-    <title>字卡</title>
+    <title>Words Picker</title>
   </head>
   <body>
     <div class="banner">
@@ -23,11 +23,17 @@
             <option value="">Please choose category</option>
         </select>
       <button id="selectButton" onclick="generateFlashcards()">Select Chapter</button>
+
     </div>
 
 
     <div id="wordPage" style="display: none;">
       <div id="flashcardContainer"></div>
+      <div id="overlay">
+        <div id="popup">
+          <span id="closeBtn" onclick="closePopup()">&times;</span>
+        </div>
+      </div>
     </div>
 
     <script src="practiceMode.js"></script>

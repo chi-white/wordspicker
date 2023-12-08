@@ -9,7 +9,8 @@ const checkJwtToken = async (req, res, next) => {
         const parseCookie = cookie.parse(req.headers.cookie) ;
         const token = parseCookie.token ;
         const decode = await jwt.verify(token, secretKey);
-        if( decode.name&&
+        if( decode.id&&
+            decode.name&&
             decode.email&&
             decode.access_expired&&
             decode.iat&&

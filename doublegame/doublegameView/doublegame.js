@@ -35,7 +35,7 @@ const matching = () => {
 
 socket.on("joinRoom", (data)=>{
     socket.emit("joinRoom", {roomName : data.roomName}) ;
-})
+}) ;
 
 socket.on("matchSucessfully", (data) => {
     roomName = data.roomName ;

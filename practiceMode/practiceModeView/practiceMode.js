@@ -3,69 +3,156 @@ const chapterSelect = document.getElementById("chapter");
 const selectPage = document.getElementById("selectPage") ;
 const wordPage = document.getElementById("wordPage") ;
 const flashcardContainer = document.getElementById('flashcardContainer');
-
+const overlay = document.getElementById('overlay') ;
+const popup = document.getElementById('popup') ;
+let word ;
 const flashcardsData = [
     { english: 'chill', chinese: '寒冷；寒意', partOfSpeech: '(n.)', example: 'The chill comes with winter' },
 ];
 
-const generateFlashcards = () => {
+const generateFlashcards = async () => {
     wordPage.style.display = "block" ;
     selectPage.style.display = "none" ;
-    const numCards = 2 ;
+    const words = await updateWords() ;
+
+    const numCards = words.length ;
     flashcardContainer.innerHTML = '';
-    const flashcard = flashcardsData[0] ;
     for (let i = 0; i < numCards; i++) {
-
+        word = words[i] ;
         const cardDiv = document.createElement('div');
-        cardDiv.setAttribute("data-clicked", false);
-
-        cardDiv.onclick = () => {
-            if (cardDiv.getAttribute('data-clicked') == "true") {
+        cardDiv.setAttribute("data-word-english", word.english);
+        const currentWord = cardDiv.getAttribute('data-word-english');
+        cardDiv.setAttribute("data-word-id", word.id);
+        const favoriteExist = await queryFavorite(word.id) ;
+        if(favoriteExist.length === 0){
+            cardDiv.setAttribute("data-clicked", "notFavorite");  
+        }else{
+            cardDiv.style.backgroundColor = '#e0f7fa';
+            cardDiv.setAttribute('data-clicked', "Favorite");
+            const starElement = document.createElement('span');
+            starElement.className = 'star';
+            starElement.innerHTML = '&#9733;';
+            cardDiv.appendChild(starElement);
+        }
+        cardDiv.onclick = async () => {
+            if (cardDiv.getAttribute('data-clicked') === "Favorite") {
                 cardDiv.style.backgroundColor = '#fff';
-                cardDiv.setAttribute('data-clicked', false);
+                cardDiv.setAttribute('data-clicked', "notFavorite");
                 const starElement = cardDiv.querySelector('.star');
                 if (starElement) {
-                cardDiv.removeChild(starElement);
+                    cardDiv.removeChild(starElement);
                 }
+                console.log("singleclick", currentWord) ;
+                const wordId = cardDiv.getAttribute('data-word-id');
+                await deleteFavorite(wordId) ;
             } else {
                 cardDiv.style.backgroundColor = '#e0f7fa';
-                cardDiv.setAttribute('data-clicked', true);
-
+                cardDiv.setAttribute('data-clicked', "Favorite");
                 const starElement = document.createElement('span');
                 starElement.className = 'star';
                 starElement.innerHTML = '&#9733;';
                 cardDiv.appendChild(starElement);
-
-                showNotification(`${flashcard.english} is added to Favorite`);
+                const wordId = cardDiv.getAttribute('data-word-id');
+                showNotification(`${currentWord} is added to Favorite`);
+                await addFavorite(wordId) ;
             }
         };
+
+        cardDiv.ondblclick = async () => {
+            overlay.style.display = 'flex';
+            const cardDiva = document.createElement('div');
+            cardDiva.innerHTML = `
+                <p class="flashcard-header">
+                    ${word.english}  ${word.abbreviation} ${word.chinese}
+                </p>
+                <p class="flashcard-example">
+                    例句：<br>${word.example}
+                </p>
+            `;
+            popup.appendChild(cardDiva) ;
+            console.log("haha") ;
+        } ;
 
         cardDiv.className = 'flashcard';
 
         cardDiv.innerHTML = `
         <p class="flashcard-header">
-            ${flashcard.english}  ${flashcard.partOfSpeech} ${flashcard.chinese}
+            ${word.english}  ${word.abbreviation} ${word.chinese}
         </p>
         <p class="flashcard-example">
-            例句：<br>${flashcard.example}
+            例句：<br>${word.example}
         </p>
         `;
-
         flashcardContainer.appendChild(cardDiv);
     }
 }
 
-const showNotification = (message) => {
-const notification = document.createElement('div');
-notification.className = 'notification';
-notification.textContent = message;
+const closePopup = () => {
+    document.getElementById('overlay').style.display = 'none';
+}
 
-document.body.appendChild(notification);
+const deleteFavorite = async (wordId) => {
+    const url = `http://localhost/deleteFavorite?wordId=${wordId}` ;
+    const response = await fetch(url, {
+        method : "GET",
+        headers : {'Content-Type': 'application/json'},
+    }) ;
+    const responseFrame = await response.json() ;
+    const responseData = responseFrame.data ;
+    console.log(responseData, wordId) ;
+}
 
-setTimeout(() => {
-    document.body.removeChild(notification);
-}, 2000);
+const queryFavorite = async (wordId) => {
+    const url = `http://localhost/queryFavorite?wordId=${wordId}` ;
+    const response = await fetch(url, {
+        method : "GET",
+        headers : {'Content-Type': 'application/json'},
+    }) ;
+    const responseFrame = await response.json() ;
+    const responseData = responseFrame.data ;
+    console.log('query') ;
+    return responseData ;
+}
+
+const addFavorite = async(wordId) => {
+    const url = `http://localhost/addFavorite?wordId=${wordId}` ;
+    const response = await fetch(url, {
+        method : "GET",
+        headers : {'Content-Type': 'application/json'},
+    }) ;
+    const responseFrame = await response.json() ;
+    const responseData = responseFrame.data ;
+    console.log('add', wordId) ;
 } ;
+
+
+const showNotification = (message) => {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        document.body.removeChild(notification);
+    }, 2000);
+} ;
+
+const updateWords = async () => {
+    if (categorySelect.value === "" || chapterSelect.value === ""){
+        alert("Please select category and chapter") ;
+    }else{
+        const url = `http://localhost/getWords?category=${categorySelect.value}&chapter=${chapterSelect.value}` ;
+        const response = await fetch(url, {
+            method : "GET",
+            headers : {'Content-Type': 'application/json'},
+        }) ;
+        const responseFrame = await response.json() ;
+        const responseData = responseFrame.data ;
+        console.log(responseData) ;
+        return responseData ;
+    }
+}
 
 const updateCategory = async() => {
     chapterSelect.innerHTML = "" ;

@@ -54,6 +54,9 @@ app.use(express.static('main/mainView')) ;
 
 const {getChapter} = require('./doublegame/doublegameController');
 app.get('/getchapter', getChapter) ;
+
+const {getWords} = require('./practiceMode/practiceModeController') ;
+app.get('/getwords', getWords) ;
 /**-------------doublegame----------- */
 app.get('/doublegame.html', checkJwtToken, checkAuth("doublegame_html")) ;
 app.use(express.static('doublegame/doublegameView')) ;
@@ -63,6 +66,10 @@ handleSocketEvents(io) ;
 app.get('/practiceMode.html', checkJwtToken, checkAuth("practicemode_html")) ;
 app.use(express.static('practiceMode/practiceModeView')) ;
 
+const {addFavorite, queryFavorite, deleteFavorite} = require('./practiceMode/practiceModeController') ;
+app.get('/addFavorite', addFavorite) ;
+app.get('/queryFavorite', queryFavorite) ;
+app.get('/deleteFavorite', deleteFavorite) ;
 /**------------server-------------- */
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
