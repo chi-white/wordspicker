@@ -72,7 +72,7 @@ const googleUserExist = (userdata) => {
         reject("exist fail") ;
       }else{
         if (result.length === 1){
-          resolve("exist") ;
+          resolve(result[0].id) ;
         }else{
           resolve("no exist") ;
         }
@@ -91,7 +91,7 @@ const googleUserInsert = (userdata) => {
         console.log("insert google user fail") ;
         reject("insert fail") ;
       }else{
-        resolve(true) ;
+        resolve(result.insertId) ;
       }
     })
   })

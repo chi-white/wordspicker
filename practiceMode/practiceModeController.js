@@ -52,7 +52,7 @@ const deleteFavorite = async(req, res) => {
         const wordId = req.query.wordId ;
         const parseCookie = cookie.parse(req.headers.cookie) ;
         const token = parseCookie.token ;
-        const decode = await jwt.verify(token, secretKey);
+        const decode = jwt.verify(token, secretKey);
         const userId = decode.id ; 
         console.log("controller log", userId, wordId) ;
         const result = await practiceModeModel.deleteFavorite(userId, wordId) ;

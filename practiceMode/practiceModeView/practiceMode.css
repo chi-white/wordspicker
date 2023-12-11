@@ -11,6 +11,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: absolute;
+    margin-top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .flashcard {
@@ -22,6 +26,19 @@ body {
     margin: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
+    animation: fadeIn 1s ease-in-out;
+    opacity: 0;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .flashcard p {
@@ -37,14 +54,27 @@ body {
     margin-top: 20px;
   }
 
+  .flashcardDetail {
+
+    background-color: white;
+    width: 600px;
+    padding: 20px;
+    margin: 10px;
+    position: relative;
+    animation: fadeIn 1s ;
+    opacity: 1;
+  }
+
   .star {
     position: absolute;
     top: 10px;
     right: 10px;
     font-size: 24px;
-    color: #ffd700;
     cursor: pointer;
+    z-index: 999;
   }
+      
+
 
   .firework-container {
     position: relative;
@@ -97,7 +127,7 @@ body {
   .banner {
     background-color: #4CAF50;
     padding: 10px;
-    text-align: right;
+    text-align: left;
     position: fixed;
     top: 0;
     left: 0;
@@ -110,6 +140,43 @@ body {
     padding: 5px 10px;
     border: none;
     cursor: pointer;
+  }
+
+  #controlSidebar {
+    cursor: pointer;
+  }
+
+  #sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
+
+  #sidebar a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
+
+  #sidebar a:hover {
+    color: #f1f1f1;
+  }
+
+  #sidebar .close-btn {
+    position: absolute;
+    top: 0;
+    left: 25px;
+    font-size: 36px;
+    margin-left: 50px;
   }
 
 #overlay {

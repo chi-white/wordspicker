@@ -76,6 +76,9 @@ const googleInsertUser = async (req, res, next) =>{
     const exist = await userModel.googleUserExist(req.user['_json']) ;
     if (exist === "no exist"){
       const insert = await userModel.googleUserInsert(req.user['_json']) ;
+      req.id = insert ;
+    }else{
+      req.id = exist ;
     }
     next() ;
   }catch(err){
@@ -93,6 +96,7 @@ const googlelogin = async (req, res) => {
     const expired_t = 3600;
     const userProfile = req.user ;
     const user = {
+      id : req.id,
       name : userProfile['_json'].name,
       email : userProfile['_json'].email,  
       role : "user",
