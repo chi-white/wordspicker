@@ -2,12 +2,12 @@ const doubleGameModel = require('./doublegameModel') ;
 
 const questionNumber = 10 ;
 
-const handleSocketEvents = (io) => {
+const handleDoublegameSocket = (io) => {
     const waitingUsers = [] ;
     const roomWords = {} ;
     const roomQuestionType = {} ;
     io.on('connection', (socket) => {
-      console.log('user connection');
+      console.log('doublegame connection');
 
       const getRandomElement = (questionNumber) => {
         let p ;
@@ -71,7 +71,7 @@ const handleSocketEvents = (io) => {
       });
 
       socket.on('disconnect', () => {
-        console.log('user disconnection');
+        console.log('doublegame disconnection');
         const index = waitingUsers.findIndex(user => user.id === socket.id) ;
         waitingUsers.splice(index, 1) ;
       });
@@ -133,4 +133,4 @@ const getChapter = async(req, res) => {
   }
 }
   
-  module.exports = {handleSocketEvents, getChapter};
+  module.exports = {handleDoublegameSocket, getChapter};

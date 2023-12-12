@@ -20,6 +20,7 @@ const getChapter = (category) =>{
 };
 
 const getWords = (category, chapter, questionNumber) => {
+    console.log("doublegame", typeof(category), typeof(chapter), typeof(questionNumber)) ;
     return new Promise((resolve, reject) => {
         const queryWords = `
         SELECT Word.english, Word.chinese 

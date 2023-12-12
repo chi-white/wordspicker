@@ -1,7 +1,7 @@
-const categorySelect = document.getElementById("category");
-const chapterSelect = document.getElementById("chapter");
 const selectPage = document.getElementById("selectPage") ;
 const wordPage = document.getElementById("wordPage") ;
+const categorySelect = document.getElementById("category");
+const chapterSelect = document.getElementById("chapter");
 const flashcardContainer = document.getElementById('flashcardContainer');
 const overlay = document.getElementById('overlay') ;
 const popup = document.getElementById('popup') ;
@@ -11,81 +11,85 @@ let word ;
 
 
 const generateFlashcards = async () => {
-    wordPage.style.display = "block" ;
-    selectPage.style.display = "none" ;
-    const words = await updateWords() ;
+    if(categorySelect.value === "" || chapterSelect.value === ""){
+        alert("Please select category and chapter") ;
+    }else{
+        wordPage.style.display = "block" ;
+        selectPage.style.display = "none" ;
+        const words = await updateWords() ;
 
-    const numCards = words.length ;
-    flashcardContainer.innerHTML = '';
-    for (let i = 0; i < numCards; i++) {
-        word = words[i] ;
+        const numCards = words.length ;
+        flashcardContainer.innerHTML = '';
+        for (let i = 0; i < numCards; i++) {
+            word = words[i] ;
 
-        const cardDiv = document.createElement('div');
-        cardDiv.setAttribute("data-word-english", word.english);
-        const currentWord = cardDiv.getAttribute('data-word-english');
-        cardDiv.setAttribute("data-word-id", word.id);
-        cardDiv.className = 'flashcard';
-        cardDiv.innerHTML += `
-        <p class="flashcard-header">
-            ${word.english}  ${word.abbreviation} ${word.chinese}
-        </p>
-        <p class="flashcard-example">
-            例句：<br>${word.example}
-        </p>
-        `;
-        cardDiv.style.opacity = '1';
+            const cardDiv = document.createElement('div');
+            cardDiv.setAttribute("data-word-english", word.english);
+            const currentWord = cardDiv.getAttribute('data-word-english');
+            cardDiv.setAttribute("data-word-id", word.id);
+            cardDiv.className = 'flashcard';
+            cardDiv.innerHTML += `
+            <p class="flashcard-header">
+                ${word.english}  ${word.abbreviation} ${word.chinese}
+            </p>
+            <p class="flashcard-example">
+                例句：<br>${word.example}
+            </p>
+            `;
+            cardDiv.style.opacity = '1';
 
 
-        const starElement = document.createElement('span');
+            const starElement = document.createElement('span');
 
-        const favoriteExist = await queryFavorite(word.id) ;
-        if(favoriteExist.length === 0){
-            cardDiv.setAttribute("data-clicked", "notFavorite");  
-            starElement.style.color = 'rgba(0, 0, 0, 0)' ;
-        }else{
-            cardDiv.style.backgroundColor = '#e0f7fa';
-            cardDiv.setAttribute('data-clicked', "Favorite");
-            starElement.style.color = 'rgb(255, 247, 15)' ;
-        }
-        
-
-        starElement.onclick = async () => {
-            if (cardDiv.getAttribute('data-clicked') === "Favorite") {
-                cardDiv.style.backgroundColor = '#fff';
-                cardDiv.setAttribute('data-clicked', "notFavorite");
+            const favoriteExist = await queryFavorite(word.id) ;
+            if(favoriteExist.length === 0){
+                cardDiv.setAttribute("data-clicked", "notFavorite");  
                 starElement.style.color = 'rgba(0, 0, 0, 0)' ;
-                const wordId = cardDiv.getAttribute('data-word-id');
-                await deleteFavorite(wordId) ;
-            } else {
+            }else{
                 cardDiv.style.backgroundColor = '#e0f7fa';
                 cardDiv.setAttribute('data-clicked', "Favorite");
-                const wordId = cardDiv.getAttribute('data-word-id');
                 starElement.style.color = 'rgb(255, 247, 15)' ;
-                showNotification(`${currentWord} is added to Favorite`);
-                await addFavorite(wordId) ;
             }
-        };
-        starElement.className = 'star';
-        starElement.innerHTML = '&#9733;';
-        cardDiv.appendChild(starElement);
+            
 
-        cardDiv.ondblclick = async () => {
-            overlay.style.display = 'flex';
-            // const cardDiva = document.createElement('div');
-            flashcardDetail.innerHTML = `
+            starElement.onclick = async () => {
+                if (cardDiv.getAttribute('data-clicked') === "Favorite") {
+                    cardDiv.style.backgroundColor = '#fff';
+                    cardDiv.setAttribute('data-clicked', "notFavorite");
+                    starElement.style.color = 'rgba(0, 0, 0, 0)' ;
+                    const wordId = cardDiv.getAttribute('data-word-id');
+                    await deleteFavorite(wordId) ;
+                } else {
+                    cardDiv.style.backgroundColor = '#e0f7fa';
+                    cardDiv.setAttribute('data-clicked', "Favorite");
+                    const wordId = cardDiv.getAttribute('data-word-id');
+                    starElement.style.color = 'rgb(255, 247, 15)' ;
+                    showNotification(`${currentWord} is added to Favorite`);
+                    await addFavorite(wordId) ;
+                }
+            };
+            starElement.className = 'star';
+            starElement.innerHTML = '&#9733;';
+            cardDiv.appendChild(starElement);
 
-                <p class="flashcard-header">
-                    ${word.english}  ${word.abbreviation} ${word.chinese}
-                </p>
-                <p class="flashcard-example">
-                    例句：<br>${word.example}
-                </p>
+            cardDiv.ondblclick = async () => {
+                overlay.style.display = 'flex';
+                // const cardDiva = document.createElement('div');
+                flashcardDetail.innerHTML = `
 
-            `;
-            popup.appendChild(flashcardDetail) ;
-        } ;
+                    <p class="flashcard-header">
+                        ${word.english}  ${word.abbreviation} ${word.chinese}
+                    </p>
+                    <p class="flashcard-example">
+                        例句：<br>${word.example}
+                    </p>
 
-        flashcardContainer.appendChild(cardDiv);
+                `;
+                popup.appendChild(flashcardDetail) ;
+            } ;
+
+            flashcardContainer.appendChild(cardDiv);
+        }
     }
 }
 

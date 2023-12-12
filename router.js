@@ -1,8 +1,8 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const {handleSocketEvents} = require('./doublegame/doublegameController');
-
+const {handleDoublegameSocket} = require('./doublegame/doublegameController');
+const {handleTestModeSocket} = require('./testMode/testModeController') ;
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
@@ -52,15 +52,14 @@ app.get('/success', googleInsertUser, googlelogin);
 app.get('/main.html', checkJwtToken, checkAuth("main_html")) ;
 app.use(express.static('main/mainView')) ;
 
-const {getChapter} = require('./doublegame/doublegameController');
-app.get('/getchapter', getChapter) ;
 
-const {getWords} = require('./practiceMode/practiceModeController') ;
-app.get('/getwords', getWords) ;
 /**-------------doublegame----------- */
 app.get('/doublegame.html', checkJwtToken, checkAuth("doublegame_html")) ;
 app.use(express.static('doublegame/doublegameView')) ;
-handleSocketEvents(io) ;
+handleDoublegameSocket(io) ;
+
+const {getChapter} = require('./doublegame/doublegameController');
+app.get('/getchapter', getChapter) ;
 
 //**------------practice mode------ */
 app.get('/practiceMode.html', checkJwtToken, checkAuth("practicemode_html")) ;
@@ -70,6 +69,16 @@ const {addFavorite, queryFavorite, deleteFavorite} = require('./practiceMode/pra
 app.get('/addFavorite', addFavorite) ;
 app.get('/queryFavorite', queryFavorite) ;
 app.get('/deleteFavorite', deleteFavorite) ;
+
+const {getWords} = require('./practiceMode/practiceModeController') ;
+app.get('/getwords', getWords) ;
+
+//**------------test mode---------- */
+app.get('/testMode.html', checkJwtToken, checkAuth("testmode_html")) ;
+app.use(express.static('testMode/testModeView')) ;
+handleTestModeSocket(io) ;
+
+
 /**------------server-------------- */
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
