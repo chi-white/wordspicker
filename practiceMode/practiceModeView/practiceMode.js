@@ -6,34 +6,41 @@ const flashcardContainer = document.getElementById('flashcardContainer');
 const overlay = document.getElementById('overlay') ;
 const popup = document.getElementById('popup') ;
 const flashcardDetail = document.getElementById('flashcardDetail') ;
+const prevButton = document.getElementById("prevButton") ;
+const nextButton = document.getElementById("nextButton") ;
 var slide = "close" ;
-let word ;
-
+var currentIndex ;
+var words ;
 
 const generateFlashcards = async () => {
     if(categorySelect.value === "" || chapterSelect.value === ""){
-        alert("Please select category and chapter") ;
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please choose category and chapter!',
+        });
     }else{
-        wordPage.style.display = "block" ;
+        wordPage.style.display = "flex" ;
         selectPage.style.display = "none" ;
-        const words = await updateWords() ;
+        words = await updateWords() ;
 
         const numCards = words.length ;
         flashcardContainer.innerHTML = '';
         for (let i = 0; i < numCards; i++) {
-            word = words[i] ;
+            let word = words[i] ;
 
             const cardDiv = document.createElement('div');
-            cardDiv.setAttribute("data-word-english", word.english);
-            const currentWord = cardDiv.getAttribute('data-word-english');
+            cardDiv.setAttribute("index", i) ;
+            cardDiv.setAttribute("english", word.english);
+            const currentWord = cardDiv.getAttribute('english');
             cardDiv.setAttribute("data-word-id", word.id);
             cardDiv.className = 'flashcard';
             cardDiv.innerHTML += `
             <p class="flashcard-header">
-                ${word.english}  ${word.abbreviation} ${word.chinese}
+                ${word.english}&nbsp;&nbsp;&nbsp;&nbsp;(${word.abbreviation}.)&nbsp;&nbsp;&nbsp;&nbsp;${word.chinese}
             </p>
             <p class="flashcard-example">
-                例句：<br>${word.example}
+                <br>${word.example}
             </p>
             `;
             cardDiv.style.opacity = '1';
@@ -44,9 +51,8 @@ const generateFlashcards = async () => {
             const favoriteExist = await queryFavorite(word.id) ;
             if(favoriteExist.length === 0){
                 cardDiv.setAttribute("data-clicked", "notFavorite");  
-                starElement.style.color = 'rgba(0, 0, 0, 0)' ;
+                starElement.style.color = '#9b9393' ;
             }else{
-                cardDiv.style.backgroundColor = '#e0f7fa';
                 cardDiv.setAttribute('data-clicked', "Favorite");
                 starElement.style.color = 'rgb(255, 247, 15)' ;
             }
@@ -54,13 +60,11 @@ const generateFlashcards = async () => {
 
             starElement.onclick = async () => {
                 if (cardDiv.getAttribute('data-clicked') === "Favorite") {
-                    cardDiv.style.backgroundColor = '#fff';
                     cardDiv.setAttribute('data-clicked', "notFavorite");
-                    starElement.style.color = 'rgba(0, 0, 0, 0)' ;
+                    starElement.style.color = '#9b9393' ;
                     const wordId = cardDiv.getAttribute('data-word-id');
                     await deleteFavorite(wordId) ;
                 } else {
-                    cardDiv.style.backgroundColor = '#e0f7fa';
                     cardDiv.setAttribute('data-clicked', "Favorite");
                     const wordId = cardDiv.getAttribute('data-word-id');
                     starElement.style.color = 'rgb(255, 247, 15)' ;
@@ -73,20 +77,41 @@ const generateFlashcards = async () => {
             cardDiv.appendChild(starElement);
 
             cardDiv.ondblclick = async () => {
+                currentIndex = cardDiv.getAttribute("index") ;
+                console.log("doubleclick", currentIndex) ;
+                if(currentIndex == 0){
+                    prevButton.style.display = "none" ;
+                    nextButton.style.display = "block" ;
+                }else if(currentIndex == words.length - 1){
+                    nextButton.style.display = "none" ;
+                    prevButton.style.display = "block" ;
+                }else{
+                    prevButton.style.display = "block" ;
+                    nextButton.style.display = "block" ;
+                }
+                popup.innerHTML = "" ;
+                flashcardDetail.innerHTML = "" ;
                 overlay.style.display = 'flex';
-                // const cardDiva = document.createElement('div');
-                flashcardDetail.innerHTML = `
+                const div = document.createElement('div');
+                div.innerHTML = `
 
                     <p class="flashcard-header">
-                        ${word.english}  ${word.abbreviation} ${word.chinese}
+                        ${word.english} &nbsp;&nbsp;&nbsp;&nbsp;(${word.abbreviation}.)&nbsp;&nbsp;&nbsp;&nbsp; ${word.chinese}
                     </p>
                     <p class="flashcard-example">
-                        例句：<br>${word.example}
+                        <br>${word.example}
                     </p>
-
+                    <p class="flashcard-example">
+                        <br>${word.example_chinese}
+                    </p>
+                    <p class="flashcard-example">
+                        <br>${word.related}
+                    </p>
                 `;
+                flashcardDetail.appendChild(div) ;
                 popup.appendChild(flashcardDetail) ;
             } ;
+           
 
             flashcardContainer.appendChild(cardDiv);
         }
@@ -197,3 +222,83 @@ const controlSidebar = () => {
         slide = "close" ;
     }
 } ;
+
+const logout = () => {
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    window.location.href = "user.html"; 
+} ;
+
+const showPrevFlashcard = () => {
+        currentIndex --;
+        console.log("showPrevFlashcard", currentIndex) ;
+        console.log(words[currentIndex].english) ;
+        popup.innerHTML = "" ;
+        flashcardDetail.innerHTML = "" ;
+        overlay.style.display = 'flex';
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <p class="flashcard-header">
+                ${words[currentIndex].english} &nbsp;&nbsp;&nbsp;&nbsp;(${words[currentIndex].abbreviation}.)&nbsp;&nbsp;&nbsp;&nbsp; ${words[currentIndex].chinese}
+            </p>
+            <p class="flashcard-example">
+                <br>${words[currentIndex].example}
+            </p>
+            <p class="flashcard-example">
+                <br>${words[currentIndex].example_chinese}
+            </p>
+            <p class="flashcard-example">
+                <br>${words[currentIndex].related}
+            </p>
+        `;
+        flashcardDetail.appendChild(div) ;
+        popup.appendChild(flashcardDetail) ;
+        if(currentIndex == 0){
+            prevButton.style.display = "none" ;
+        }
+        nextButton.style.display = "block" ;
+
+} ;
+
+const showNextFlashcard = () => {
+    currentIndex ++;
+    console.log("showPrevFlashcard", currentIndex) ;
+    console.log(words[currentIndex].english) ;
+    popup.innerHTML = "" ;
+    flashcardDetail.innerHTML = "" ;
+    overlay.style.display = 'flex';
+    const div = document.createElement('div');
+    div.innerHTML = `
+        <p class="flashcard-header">
+            ${words[currentIndex].english} &nbsp;&nbsp;&nbsp;&nbsp;(${words[currentIndex].abbreviation}.)&nbsp;&nbsp;&nbsp;&nbsp; ${words[currentIndex].chinese}
+        </p>
+        <p class="flashcard-example">
+            <br>${words[currentIndex].example}
+        </p>
+        <p class="flashcard-example">
+            <br>${words[currentIndex].example_chinese}
+        </p>
+        <p class="flashcard-example">
+            <br>${words[currentIndex].related}
+        </p>
+    `;
+    flashcardDetail.appendChild(div) ;
+    popup.appendChild(flashcardDetail) ;
+    if(currentIndex == words.length - 1){
+        nextButton.style.display = "none" ;
+
+    }
+    prevButton.style.display = "block" ;
+} ;
+
+const back = () => {
+    if(selectPage.style.display == "none"){
+        selectPage.style.display = "block" ;
+        wordPage.style.display = "none" ;
+    }else{
+        window.location.href = "main.html"; 
+    }
+} ;
+
+const home = () => {
+    window.location.href = "main.html"; 
+}

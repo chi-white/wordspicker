@@ -31,7 +31,8 @@ label {
 .banner {
   background-color: #4CAF50;
   padding: 3px;
-  text-align: right;
+  display: flex; /* 使用 Flex 布局 */
+  justify-content: space-between; /* 将子元素分散对齐，确保最左边和最右边 */
   position: fixed;
   top: 0;
   left: 0;
@@ -41,13 +42,11 @@ label {
 }
 
 .banner button {
-  background-color: #f8f8f8;
-  padding: 8px 12px; /* 調整 padding 使得按鈕更舒適 */
-  border: 10px solid #ccc; 
-  border-radius: 5px;
+  background-color: #4CAF50;
+  padding: 8px 12px; 
+  font-size: 16px;
   cursor: pointer;
-  margin-right: 30px;
-  transition: background-color 0.3s ease; /* 添加背景色變化的動畫效果 */
+  transition: background-color 0.3s ease; /* 添加背景色变化的动画效果 */
 }
 
 
@@ -86,19 +85,6 @@ select option {
   transition: max-height 0.5s ease; /* 添加動畫效果 */
 }
 
-
-.banner button {
-  background-color: #4CAF50;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  color: #ffffff;
-}
-
-
-
 #startMatchPage,
 #waitingPage,
 #gamePage,
@@ -125,6 +111,8 @@ select option {
   flex-direction: column;
   align-items: center;
 }
+
+
 
 @keyframes rainbow {
   0% {
@@ -251,6 +239,20 @@ select option {
   left: 20%;
 }
 
+#myScoreWord{
+  font-size: 20px;
+  position: absolute;
+  top: 20%;
+  left: 15%;
+}
+
+#yourScoreWord{
+  font-size: 20px;
+  position: absolute;
+  top: 20%;
+  right: 12%;
+}
+
 #yourScore {
   font-size: 20px;
   position: absolute;
@@ -345,4 +347,6 @@ select option {
 
 #correct-ans {
   font-size: 20px;
+  margin: 20px ;
+  position: absolute ;
 }

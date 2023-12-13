@@ -8,13 +8,15 @@
   </head>
   <body>
     <div class="banner">
-      <span id="controlSidebar" onclick="controlSidebar()">☰</span>
-    </div>
-
-    <div id="sidebar">
-      <a href="#">Link 1</a>
-      <a href="#">Link 2</a>
-      <a href="#">Link 3</a>
+      <button id="backButton" onclick="back()">
+        🔙
+      </button>
+      <button class="homeButton" onclick="home()">
+        🏠
+      </button>
+      <button id="logoutButton" onclick="logout()">
+        🔚
+      </button>
     </div>
 
     <div id="selectPage">
@@ -28,7 +30,7 @@
         <select id="chapter" disabled>
             <option value="">Please choose category</option>
         </select>
-      <label for="questionType">Question Type</label>
+      <label for="questionType">Question Type : </label>
         <select id="questionType">
             <option value="EtoC">English to Chinese</option>
             <option value="CtoE">Chinese to English</option>
@@ -38,20 +40,25 @@
     </div>
 
     <div id="testPage" style="display: none">
-        <div id="wordsdisplay"></div>
         <div id="time"></div>
-        <div id="resultShow"></div>
-        <input id="wordsinput" placeholder="type">
+        <div id="wordsdisplay"></div>
+        <div id="correct"></div>
+        <div id="revise"></div>
+        <input id="wordsinput" placeholder="type" autocomplete="off">
     </div>
 
 
     <div id="endPage" style="display: none;">
-        <div id="finalScore"></div>
-        <div id="errorRecord"></div>
+      <div id="finalScore"></div>
+      <div id="errorRecord"></div>
+      <div id="endPage-button">
         <button id="backMainPage" class="button" onclick="backMain()">Back to Main</button>
         <button id="backSelectPage" class="button" onclick="backSelect()">Start Test</button>
         <button id ="backTest" class="button" onclick="backTest()">Retest</button>
+      </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     <script src="testMode.js"></script>
   </body>

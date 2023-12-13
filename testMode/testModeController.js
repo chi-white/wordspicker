@@ -45,7 +45,7 @@ const handleTestModeSocket = (io) => {
             }else{
                 const question = questionWords[socket.id][index].chinese.split('；');
                 const randomIndex = Math.floor(Math.random() * (question.length));
-                io.to(socket.id).emit('getTestWords', {word:question[randomIndex], index:index}) ;
+                io.to(socket.id).emit('getTestWords', {word:question[randomIndex], abbreviation:questionWords[socket.id][index].abbreviation, index:index}) ;
             }
         }) ;
 

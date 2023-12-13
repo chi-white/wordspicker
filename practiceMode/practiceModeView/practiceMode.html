@@ -8,15 +8,17 @@
   </head>
   <body>
     <div class="banner">
-      <span id="controlSidebar" onclick="controlSidebar()">☰</span>
-      <!-- <button id="logoutButton" onclick="logout()">Log Out</button> -->
+      <button id="backButton" onclick="back()">
+        🔙
+      </button>
+      <button class="homeButton" onclick="home()">
+        🏠
+      </button>
+      <button id="logoutButton" onclick="logout()">
+        🔚
+      </button>
     </div>
 
-    <div id="sidebar">
-      <a href="#">Link 1</a>
-      <a href="#">Link 2</a>
-      <a href="#">Link 3</a>
-    </div>
 
     <div id="selectPage">
       <label for="subCategory">Category:</label>
@@ -37,13 +39,15 @@
     <div id="wordPage" style="display: none;">
       <div id="flashcardContainer"></div>
       <div id="overlay" onclick="overlayClick(event)">
+        <button onclick="showPrevFlashcard()" id="prevButton">⬅️</button>
         <div id="popup">
-          <!-- <span id="closeBtn" onclick="closePopup()">&times;</span> -->
           <div id="flashcardDetail" class="flashcardDetail"></div>
         </div>
+        <button onclick="showNextFlashcard()" id="nextButton">➡️</button>
       </div>
     </div>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
     <script src="practiceMode.js"></script>
   </body>
 </html>

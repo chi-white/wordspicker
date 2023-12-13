@@ -1,3 +1,4 @@
+
 body {
   display: flex;
   flex-direction: column;
@@ -5,7 +6,103 @@ body {
   justify-content: center;
   height: 100vh;
   margin: 0;
+  background-color: #1c3349; /* 墨綠色 */
+  color: #ffffff; /* 白色文字 */
+  font-family: 'Arial', sans-serif; /* 使用 Arial 字體 */
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #4CAF50; 
+  color: #ffffff; 
+  border: none;
+  border-radius: 5px;
+}
+
+label {
+  font-size: 18px; /* 調整標籤字體大小 */
+  margin-bottom: 8px;
+}
+
+.banner {
+  background-color: #4CAF50;
+  padding: 3px;
+  display: flex; /* 使用 Flex 布局 */
+  justify-content: space-between; /* 将子元素分散对齐，确保最左边和最右边 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.banner button {
+  background-color: #4CAF50;
+  padding: 8px 12px; 
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* 添加背景色变化的动画效果 */
+}
+
+
+
+.banner button:hover {
+  background-color: #1c3349; /* 懸停時的背景色 */
+}
+
+#selectPage label,
+#selectPage select,
+#selectPage button {
+  display: flex;
+  margin: 10px 0;
+} 
+
+
+select {
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50; 
+  color: #ffffff; 
+  width: 400px; 
+}
+
+select:focus {
+  outline: none;
+  box-shadow: 0 0 5px #ffffff; /* 白色陰影 */
+  max-height: 200px; /* 選單被選擇時高度展開為 200px（根據需求調整） */
+}
+
+select option {
+  background-color: #4CAF50; /* 綠色背景 */
+  color: #ffffff; /* 白色文字 */
+  transition: max-height 0.5s ease; /* 添加動畫效果 */
+}
+
+#selectPage
+{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top:20px;
+  opacity: 0; 
+  animation: fadeInOut 0.5s ease-in-out forwards ;
+}
+
+@keyframes fadeInOut {
+  from {
+    opacity: 0;
   }
+  to {
+    opacity: 1;
+  }
+}
+/**----------------**/
 
   #flashcardContainer {
     display: flex;
@@ -18,9 +115,8 @@ body {
   }
 
   .flashcard {
-    border: 1px solid #ddd;
     border-radius: 8px;
-    background-color: #fff;
+    background-color: #737070;
     width: 600px;
     padding: 20px;
     margin: 10px;
@@ -55,14 +151,14 @@ body {
   }
 
   .flashcardDetail {
-
-    background-color: white;
+    border-radius: 8px;
+    background-color: #737070;
     width: 600px;
     padding: 20px;
-    margin: 10px;
+    margin: 0px;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
     position: relative;
-    animation: fadeIn 1s ;
-    opacity: 1;
+    /* opacity: 0; */
   }
 
   .star {
@@ -103,16 +199,6 @@ body {
     }
   }
 
-  button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
   .notification {
     position: fixed;
     bottom: 20px;
@@ -124,23 +210,6 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
-  .banner {
-    background-color: #4CAF50;
-    padding: 10px;
-    text-align: left;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 99%;
-    z-index: 1000; 
-  }
-  
-  .banner button {
-    background-color: #f8f8f8;
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
-  }
 
   #controlSidebar {
     cursor: pointer;
@@ -186,22 +255,32 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.8);
   justify-content: center;
   align-items: center;
 }
 
 #popup {
-  background: #fff;
+  background: #737070;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 10px rgba(50, 48, 48, 0.5);
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
-/* #closeBtn {
+#prevButton,
+#nextButton {
+    font-size: 24px;
+    background: none;
+    border: none;
+}
+
+#nextButton {
+  right:20%;
+}
+
+#logoutButton{
+  display: inline-block;
+  margin-right: 10px; /* 适当调整右边距 */
   cursor: pointer;
-  position: absolute;
-  top: 100px;
-  right: 100px;
-  font-size: 24px; 
-} */
+}

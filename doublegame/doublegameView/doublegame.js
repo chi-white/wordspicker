@@ -261,6 +261,21 @@ const logout = () => {
     window.location.href = "user.html"; 
 } ;
 
+const back = () => {
+    if(startMatchPage.style.display == "none"){
+        startMatchPage.style.display = "flex" ;
+        waitingPage.style.display = "none" ;
+        gamePage.style.display = "none" ;
+        endPage.style.display = "none" ;
+    }else{
+        window.location.href = "main.html"; 
+    }
+} ;
+
+const home = () => {
+    window.location.href = "main.html"; 
+}
+
 
 
 

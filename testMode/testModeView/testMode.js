@@ -10,21 +10,11 @@ const endPage = document.getElementById("endPage");
 const input = document.getElementById('wordsinput') ;
 const wordPlace = document.getElementById('wordsdisplay') ;
 const time = document.getElementById("time") ;
-const resultShow = document.getElementById("resultShow") ;
+const correct = document.getElementById("correct") ;
+const revise = document.getElementById("revise") ;
 const questionType = [] ;
 var questionNumber = 3 ;
-
-var slide = "close" ;
-const controlSidebar = () => {
-    if (slide === "close"){
-        document.getElementById('sidebar').style.width = '0px';
-        slide = "open" ;
-    }else{
-        document.getElementById('sidebar').style.width = '250px';
-        slide = "close" ;
-    }
-} ;
-
+var sendAns = false ;
 
 const updateCategory = async() => {
     chapterSelect.innerHTML = "" ;
@@ -50,7 +40,11 @@ const updateCategory = async() => {
 
 const questionRequest = async () => {
     if (categorySelect.value === "" || chapterSelect.value === ""){
-        alert("Please select category and chapter") ;
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please choose category and chapter!',
+        });
     }else{
         socket.emit("setTestWords", {
             category : categorySelect.value,
@@ -62,7 +56,7 @@ const questionRequest = async () => {
 
 socket.on("setSucessfully", () => {
     selectPage.style.display = "none" ;
-    testPage.style.display = "block" ;
+    testPage.style.display = "flex" ;
     wordsIteration() ;
 }) ;
 
@@ -71,7 +65,9 @@ const wordsIteration = async() => {
         await new Promise((resolve, reject) => {
             socket.emit("getTestWords", {index : index}) ;
             socket.once("getTestWords", async(data) => {
-                resultShow.textContent = "" ;
+                correct.textContent = "" ;
+                revise.textContent = "" ;
+                sendAns = false ;
                 await getWordsHandle(data) ;
                 input.value = "" ;
                 resolve() ;
@@ -107,7 +103,9 @@ const countdownAndReply = (index) => {
             }else if (countdown === 0) {
                 input.disabled = true ;
                 time.textContent = time.textContent ;
-                socket.emit("sendTestAnswer", {answer: input.value, index:index}) ;
+                if(!sendAns){
+                    socket.emit("sendTestAnswer", {answer: input.value, index:index}) ;
+                }
             }else if(countdown <= -4){
                 countdown = 10 ;
                 clearInterval(countdownTimer);  
@@ -126,6 +124,7 @@ const handleEnterKey = (event, index) => {
         input.value = "" ;
         input.disabled = true ;
         socket.emit("sendTestAnswer", {answer: inputValue, index:index}) ;
+        sendAns = true ;
         input.removeEventListener('keydown', currentEvent);
     }
 } ;
@@ -134,9 +133,15 @@ socket.on("testAnswerResponse", (data) => {
     answerNumber++ ;
     if(data.answer === false){
         questionNumber++ ;
+        revise.textContent = data.word ;
+        document.body.classList.add('condition-met');
+        document.body.addEventListener('animationend', () => {
+            document.body.classList.remove('condition-met');
+        }) ;
+    }else{
+        correct.textContent = data.word ;
+        triggerFloat(correct) ;
     }
-    resultShow.textContent = data.word ;
-    console.log(data.answer) ;
 }) ;
 
 
@@ -146,7 +151,7 @@ const goToEnd = () => {
     socket.emit("deleteTestRecord") ;
     questionNumber = 3 ;
     testPage.style.display = "none" ;
-    endPage.style.display = "block" ;
+    endPage.style.display = "flex" ;
 }
 
 const backMain = () => {
@@ -155,10 +160,45 @@ const backMain = () => {
 
 const backSelect = () => {
     endPage.style.display = 'none' ;
-    selectPage.style.display = 'block' ;
+    selectPage.style.display = 'flex' ;
 } ;
 
 const backTest = () => {
     endPage.style.display = 'none' ;
-    testPage.style.display = 'block' ;
-} 
+    testPage.style.display = 'flex' ;
+    correct.textContent = "" ;
+    time.textContent = "" ;
+    socket.emit("setTestWords", {
+        category : categorySelect.value,
+        chapter : chapterSelect.value,
+        questionNumber : questionNumber,
+        questionType : questionTypeSelect.value}) ;
+}  ;
+
+const back = () => {
+    if(selectPage.style.display == "none"){
+        selectPage.style.display = "flex" ;
+        testPage.style.display = "none" ;
+        endPage.style.display = "none" ;
+        console.log(selectPage.style.display) ;
+    }else{
+        window.location.href = "main.html";
+    }
+}
+
+const home = () => {
+    window.location.href = "main.html"; 
+}
+
+const logout = () => {
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    window.location.href = "user.html"; 
+} ;
+
+
+const triggerFloat = (element) => {
+    element.classList.add('float-up');
+    element.addEventListener('animationend', () => {
+        element.classList.remove('float-up');
+    });
+} ;

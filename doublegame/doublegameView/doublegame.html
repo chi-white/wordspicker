@@ -8,9 +8,17 @@
 </head>
 <body>
 
-<div class="banner">
-  <button id="logoutButton" onclick="logout()">Log Out</button>
-</div>
+  <div class="banner">
+    <button id="backButton" onclick="back()">
+      🔙
+    </button>
+    <button class="homeButton" onclick="home()">
+      🏠
+    </button>
+    <button id="logoutButton" onclick="logout()">
+      🔚
+    </button>
+  </div>
 
 <div id="startMatchPage">
   <label for="subCategory">Category:</label>
@@ -45,18 +53,20 @@
 <div id="gamePage" style="display: none;">
   <div id="time">6</div>
   <div id="wordsdisplay">ok</div>
+  <div id="myScoreWord">Your Score</div>
   <div id="myScore" value="0">0</div>
   <div class="progress-container" id="myBarContainer">
     <div class="progress-bar" id="myBar"></div>
   </div>
-  <div id="gamePage-myinfo">my info test</div>
+  <div id="gamePage-myinfo"></div>
+  <div id="yourScoreWord">Opponent Score</div>
   <div id="yourScore" value="0">0</div>
   <div class="progress-container" id="yourBarContainer">
     <div class="progress-bar" id="yourBar"></div>
   </div>
-  <div id="gamePage-yourinfo">tour info test</div>
+  <div id="gamePage-yourinfo"></div>
   <div id="correct-ans"></div>
-  <input id="wordsinput" placeholder="type">
+  <input id="wordsinput" placeholder="type" autocomplete="off">
 </div>
 
 <div id="endPage" style="display: none">
