@@ -78,14 +78,13 @@ const wordsIteration = async() => {
             })
         }) ;
     }
-
     goToEnd() ;
 } ;
 
 
 const getWordsHandle = async (data) => {
     const index = data.index ;
-    wordPlace.textContent  = data.word ;
+    wordPlace.textContent  = data.word+` (${data.abbreviation}.)` ;
     input.disabled = false ;
     input.focus();
     await countdownAndReply(index) ;

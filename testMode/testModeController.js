@@ -29,7 +29,6 @@ const handleTestModeSocket = (io) => {
 
         socket.on("setTestWords", async (data) =>{
             try{
-              console.log("questiontype", data.questionType) ;
                 questionWords[socket.id] = await testModeModel.setTestWords(data.category, data.chapter, data.questionNumber) ;
                 questionType[socket.id] = await generateQuestionType(data.questionNumber, data.questionType) ;
                 io.to(socket.id).emit("setSucessfully") ;
@@ -42,7 +41,7 @@ const handleTestModeSocket = (io) => {
         socket.on("getTestWords", async(data) => {
             const index = data.index ;
             if(questionType[socket.id][index] === "EtoC"){
-                io.to(socket.id).emit("getTestWords", {word:questionWords[socket.id][index].english, index:index}) ;
+                io.to(socket.id).emit("getTestWords", {word:questionWords[socket.id][index].english, abbreviation:questionWords[socket.id][index].abbreviation, index:index}) ;
             }else{
                 const question = questionWords[socket.id][index].chinese.split('；');
                 const randomIndex = Math.floor(Math.random() * (question.length));

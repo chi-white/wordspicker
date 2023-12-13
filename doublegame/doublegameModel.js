@@ -23,7 +23,7 @@ const getWords = (category, chapter, questionNumber) => {
     console.log("doublegame", typeof(category), typeof(chapter), typeof(questionNumber)) ;
     return new Promise((resolve, reject) => {
         const queryWords = `
-        SELECT Word.english, Word.chinese 
+        SELECT Word.english, Word.chinese, Word.abbreviation
         FROM Word
         JOIN Category ON Word.category = Category.id 
         WHERE Category.category = ? and Word.chapter = ? 

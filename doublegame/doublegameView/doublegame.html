@@ -8,10 +8,11 @@
 </head>
 <body>
 
+<div class="banner">
+  <button id="logoutButton" onclick="logout()">Log Out</button>
+</div>
+
 <div id="startMatchPage">
-  <div class="banner">
-    <button id="logoutButton" onclick="logout()">Log Out</button>
-  </div>
   <label for="subCategory">Category:</label>
     <select id="category" onchange="updateCategory()">
       <option value="">Please select</option>
@@ -26,44 +27,61 @@
 </div>
 
 <div id="waitingPage" style="display: none;">
-  <div class="banner">
-    <button id="logoutButton" onclick="logout()">Log Out</button>
-  </div>  
   <div id="waitingBlock">
-    <p>等待中...</p>
+    <p>W</p>
+    <p>a</p>
+    <p>i</p>
+    <p>t</p>
+    <p>i</p>
+    <p>n</p>
+    <p>g</p>
+    <p>.</p>
+    <p>.</p>
+    <p>.</p>
   </div>
   <button id="cancelMatch" onclick="cancelMatch()">Cancel</button>
 </div>
 
 <div id="gamePage" style="display: none;">
+  <div id="time">6</div>
   <div id="wordsdisplay">ok</div>
-  <div id="time"></div>
-  <div id="myScore">0</div>
-  <div id="yourScore">0</div>
+  <div id="myScore" value="0">0</div>
+  <div class="progress-container" id="myBarContainer">
+    <div class="progress-bar" id="myBar"></div>
+  </div>
+  <div id="gamePage-myinfo">my info test</div>
+  <div id="yourScore" value="0">0</div>
+  <div class="progress-container" id="yourBarContainer">
+    <div class="progress-bar" id="yourBar"></div>
+  </div>
+  <div id="gamePage-yourinfo">tour info test</div>
+  <div id="correct-ans"></div>
   <input id="wordsinput" placeholder="type">
 </div>
 
 <div id="endPage" style="display: none">
-  <div class="banner">
-    <button id="logoutButton" onclick="logout()">Log Out</button>
+  <div id="result">I win</div>
+  <div id="container">
+    <div class="score" id="myScorePlace-container">
+      <p>Your Score</p>
+      <p id="myScorePlace">55</p>
+    </div>
+    <div class="score" id="yourScorePlace-container">
+      <p>Opponent's Score</p>
+      <p id="yourScorePlace">0</p>
+    </div>
   </div>
-  <div class="container">
-  <div id="result"></div>
-  <div class="score">
-    <p>My Score</p>
-    <p id="myScorePlace"></p>
+  <div id="endPage-button">
+    <button id="backMainPage" class="button" onclick="backMain()">Back to Main</button>
+    <button id="backStartMatchPage" class="button" onclick="backStartMatch()">Start Match</button>
+    <button id ="backWaitingPage" class="button" onclick="backWaiting()">Rematch</button>
   </div>
-  <div class="score">
-    <p>Your Score</p>
-    <p id="yourScorePlace"></p>
-  </div>
-  <button id="backMainPage" class="button" onclick="backMain()">Back to Main</button>
-  <button id="backStartMatchPage" class="button" onclick="backStartMatch()">Start Match</button>
-  <button id ="backWaitingPage" class="button" onclick="backWaiting()">Rematch</button>
+  
 </div>
 
 
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
 <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
 <script src="doublegame.js"></script>
 

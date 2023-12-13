@@ -36,8 +36,6 @@ const handleDoublegameSocket = (io) => {
                 const roomName = `room_${user1}_${user2}` ;
                 roomQuestionType[roomName] = getRandomElement(questionNumber) ;
                 roomWords[roomName] = await doubleGameModel.getWords(data.category, data.chapter, questionNumber) ;
-                console.log("haha", roomWords[roomName]) ;
-                console.log("haha", roomQuestionType[roomName]) ;
                 io.to(user1).emit('joinRoom', {roomName : roomName}) ;
                 io.to(user2).emit('joinRoom', {roomName : roomName}) ;
                 waitingUsers.splice(Math.max(i, myIndex), 1) ;
@@ -80,11 +78,11 @@ const handleDoublegameSocket = (io) => {
         const roomName = data.roomName ;
         const index = data.index ;
         if(roomQuestionType[roomName][index] === "EtoC"){
-          io.to(socket.id).emit('getWords', {word:roomWords[roomName][index].english, roomName: roomName, index:index}) ;
+          io.to(socket.id).emit('getWords', {word:roomWords[roomName][index].english, abbreviation:roomWords[roomName][index].abbreviation , roomName: roomName, index:index}) ;
         }else{
           const question = roomWords[roomName][index].chinese.split('；');
           const randomIndex = Math.floor(Math.random() * (question.length));
-          io.to(socket.id).emit('getWords', {word:question[randomIndex], roomName: roomName, index:index}) ;
+          io.to(socket.id).emit('getWords', {word:question[randomIndex], abbreviation:roomWords[roomName][index].abbreviation, roomName: roomName, index:index}) ;
         }
       }) ;
 
@@ -92,19 +90,18 @@ const handleDoublegameSocket = (io) => {
         const roomName = data.roomName ;
         const index = data.index ;
         const score = data.score ;
-        console.log(`${socket.id} send answer ${data.answer}`) ;
         if(roomQuestionType[roomName][index] === "EtoC"){
           const answer = roomWords[roomName][index].chinese.split('；');
           if (answer.includes(data.answer)){         
             io.to(data.roomName).emit('answerResponse', {answer:true, id: socket.id, score:score}) ;
           }else{
-            io.to(data.roomName).emit('answerResponse', {answer:false, id: socket.id}) ;
+            io.to(data.roomName).emit('answerResponse', {answer:false, id: socket.id, word:roomWords[roomName][index].chinese}) ;
           }
         }else{
           if ( data.answer === roomWords[roomName][index].english){         
             io.to(data.roomName).emit('answerResponse', {answer:true, id: socket.id, score:score}) ;
           }else{
-            io.to(data.roomName).emit('answerResponse', {answer:false, id: socket.id}) ;
+            io.to(data.roomName).emit('answerResponse', {answer:false, id: socket.id, word:roomWords[roomName][index].english}) ;
           }
         }
           
