@@ -104,6 +104,12 @@ select option {
   text-align: center;
   margin-bottom: 200px;
 }
+
+#finalScore {
+  font-size: 72px;
+  text-align: center;
+  margin-bottom: 200px;
+}
   
 #wordsinput {
   font-size: 16px;

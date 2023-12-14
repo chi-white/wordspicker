@@ -30,11 +30,17 @@
         <select id="chapter" disabled>
             <option value="">Please choose category</option>
         </select>
-      <label for="questionType">Question Type : </label>
+        <label for="questionType">Question Type : </label>
         <select id="questionType">
             <option value="EtoC">English to Chinese</option>
             <option value="CtoE">Chinese to English</option>
             <option value="Mix">Mix</option>
+        </select>
+        <label for="mode">Mode</label>
+        <select id="mode">
+            <option value="ALL">All Words</option>
+            <option value="UCB">Personal</option>
+            <option value="RANDOM">Random</option>
         </select>
       <button id="selectButton" onclick="questionRequest()">Start Test</button>
     </div>
@@ -58,7 +64,6 @@
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
-    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     <script src="testMode.js"></script>
   </body>

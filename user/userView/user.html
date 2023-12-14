@@ -5,19 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Words Picker</title>
     <link rel="stylesheet" href="user.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 
     <div class="login-signup-form">
-        <h2>SIgn in/ Sign up</h2>
-        <div class="toggle-buttons">
-            <button id="loginBtn" onclick="toggleForm('loginForm')">Sign In</button>
-            <button id="signupBtn" onclick="toggleForm('signupForm')">Sign Up</button>
+        <h2 position="fixed">Words Picker</h2>
+        <div id="container">
+            <p>Sign Up</p>
+            <label class="switch" id="mySwitch">
+                <input type="checkbox" id="switchCheckbox">
+                <span class="slider round"></span>
+            </label>
+            <p>Sign In</p>
         </div>
-
-        <div id="signupForm" class="form" style="display:none;">
+        <div id="signupForm" class="form">
             <label for="signupName">Name:</label>
             <input type="text" id="signupName" name="signupName" value="king" required>
             <label for="signupEmail">Email:</label>
@@ -27,19 +30,29 @@
             <button type="button" onclick="signup()">Sign Up</button>
         </div>
 
-        <div id="loginForm" class="form">
+        <div id="loginForm" class="form" style="display:none;">
             <label for="loginEmail">Email:</label>
             <input type="email" id="loginEmail" name="loginEmail" value="king@gmail.com" required>
             <label for="loginPassword">Password:</label>
             <input type="password" id="loginPassword" name="loginPassword" value="12345678" required>
             <button type="button" onclick="login()">Sign In</button>
             <div class="form">
-                <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google"></span> SignIn with Google</a>
+                <a href="/auth/google" class="btn btn-danger">
+                    <button>
+                        <span class="fa fa-google"></span> 
+                        SignIn with Google
+                    </button>
+                </a>
             </div>
         </div>
         
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
     <script src="user.js"></script>
 </body>
 </html>
+
+
+
+
+

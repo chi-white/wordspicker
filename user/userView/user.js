@@ -42,14 +42,27 @@ const signup = async () => {
         const responseData = await response.json();
 
         if (responseData.err) {
-            alert(responseData.err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: responseData.err,
+            });
         } else {
             console.log('Success:', responseData);
-            alert("Successfully signed up");
+        
+            Swal.fire({
+                icon: 'success',
+                title: 'Congratulation',
+                text: "Successfully signed up",
+            });
         }
     } catch (error) {
         console.error('Error:', error);
-        alert(error.message || 'An error occurred.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: error || "An Error Ocurred",
+        });
     }
 }
 
@@ -77,13 +90,32 @@ const login = async () => {
         const responseData = await response.json();
 
         if (responseData.err) {
-            alert(responseData.err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: responseData.err || "An Error Ocurred",
+            })
         } else {
             console.log('Success:', responseData);
             window.location.href = 'main.html' ;
         }
     } catch (error) {
         console.error('Error:', error);
-        alert(error.message || 'An error occurred.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: error || "An Error Ocurred",
+        })
     }
 }
+
+const switchElement = document.getElementById("mySwitch");
+const switchCheckbox = document.getElementById("switchCheckbox");
+
+switchElement.addEventListener("click", () => {
+    if (switchCheckbox.checked) {
+        toggleForm('loginForm');
+    } else {
+        toggleForm('signupForm');
+    }
+});
