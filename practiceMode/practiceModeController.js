@@ -64,4 +64,17 @@ const deleteFavorite = async(req, res) => {
     }
 }
 
-module.exports = {getWords, addFavorite, queryFavorite, deleteFavorite} ;
+const getFavoriteWords = async (req, res) => {
+    const parseCookie = cookie.parse(req.headers.cookie) ;
+    const token = parseCookie.token ;
+    const decode = jwt.verify(token, secretKey);
+    try{
+        const result = await practiceModeModel.getFavoriteWords(decode.id) ;
+        return res.status(200).json({data:result}) ;
+    }catch(err){
+        console.log("getFavoriteWords fail") ;
+        return res.status(500).json({err:err})
+    }
+} ;
+
+module.exports = {getWords, addFavorite, queryFavorite, deleteFavorite, getFavoriteWords} ;

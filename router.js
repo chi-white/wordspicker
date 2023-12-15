@@ -52,6 +52,8 @@ app.get('/success', googleInsertUser, googlelogin);
 app.get('/main.html', checkJwtToken, checkAuth("main_html")) ;
 app.use(express.static('main/mainView')) ;
 
+const {getDiagramData} = require('./main/mainController');
+app.get('/diagram', getDiagramData) ;
 
 /**-------------doublegame----------- */
 app.get('/doublegame.html', checkJwtToken, checkAuth("doublegame_html")) ;
@@ -65,10 +67,11 @@ app.get('/getchapter', getChapter) ;
 app.get('/practiceMode.html', checkJwtToken, checkAuth("practicemode_html")) ;
 app.use(express.static('practiceMode/practiceModeView')) ;
 
-const {addFavorite, queryFavorite, deleteFavorite} = require('./practiceMode/practiceModeController') ;
+const {addFavorite, queryFavorite, deleteFavorite, getFavoriteWords} = require('./practiceMode/practiceModeController') ;
 app.get('/addFavorite', addFavorite) ;
 app.get('/queryFavorite', queryFavorite) ;
 app.get('/deleteFavorite', deleteFavorite) ;
+app.get('/getFavoriteWords', getFavoriteWords) ;
 
 const {getWords} = require('./practiceMode/practiceModeController') ;
 app.get('/getwords', getWords) ;

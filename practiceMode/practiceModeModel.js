@@ -20,6 +20,25 @@ const getWords = (category, chapter) => {
     }) ;     
 } ;
 
+const getFavoriteWords = (userId) => {
+    return new Promise((resolve, reject) => {
+        const queryWords = `
+        SELECT Word.*
+        FROM Word
+        JOIN Favorite ON Favorite.wordid = Word.id
+        WHERE Favorite.userid = ?
+        ` ;
+        db.query(queryWords, [userId], (err, result) => {
+            if (err) {
+                console.log("get Favorite words fail") ;
+                reject(err) ;
+            }else{
+                resolve(result) ;
+            }
+        }) ;
+    }) ;     
+} ;
+
 const addFavorite = (userId, wordId) =>{
     return new Promise((resolve, reject) => {
         const insertFavorite = `INSERT INTO Favorite (userid, wordid) values (?,?) ;` ;
@@ -62,4 +81,4 @@ const deleteFavorite = (userId, wordId) => {
     }) ;
 }
 
-module.exports = {getWords,addFavorite, queryFavorite, deleteFavorite} ;
+module.exports = {getWords,addFavorite, queryFavorite, deleteFavorite, getFavoriteWords} ;

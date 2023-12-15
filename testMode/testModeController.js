@@ -122,9 +122,11 @@ const handleTestModeSocket = (io) => {
               delete questionType[socket.id] ;
             }
             const decode =  jwt.verify(data.token, secretKey);
-            console.log(decode.id, "delete") ; 
+            console.log(data.category, "from delete recorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrd") ;
+            testModeModel.recordScore(decode.id, data.category, data.chapter, data.score) ;
             testModeModel.reRangeProb(decode.id, data.category, data.chapter) ;
           }) ;
+
 
           socket.on('disconnect', () => {
             console.log('testMode disconnection');

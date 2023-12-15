@@ -22,7 +22,7 @@ const generateFlashcards = async () => {
     }else{
         wordPage.style.display = "flex" ;
         selectPage.style.display = "none" ;
-        words = await updateWords() ;
+        words = await updateWords(categorySelect.value) ;
 
         const numCards = words.length ;
         flashcardContainer.innerHTML = '';
@@ -175,11 +175,16 @@ const showNotification = (message) => {
     }, 2000);
 } ;
 
-const updateWords = async () => {
+const updateWords = async (category) => {
     if (categorySelect.value === "" || chapterSelect.value === ""){
         alert("Please select category and chapter") ;
     }else{
-        const url = `http://localhost/getWords?category=${categorySelect.value}&chapter=${chapterSelect.value}` ;
+        let url ;
+        if (category === "favorite"){
+            url = `http://localhost/getFavoriteWords` ;
+        }else{
+            url = `http://localhost/getWords?category=${categorySelect.value}&chapter=${chapterSelect.value}` ;
+        }
         const response = await fetch(url, {
             method : "GET",
             headers : {'Content-Type': 'application/json'},
@@ -195,6 +200,11 @@ const updateCategory = async() => {
     chapterSelect.innerHTML = "" ;
     if (categorySelect.value === ""){
         chapterSelect.disabled = true ;
+    }else if(categorySelect.value === "favorite"){
+        var option = document.createElement("option");
+        option.value = 1 ;
+        option.text = 1 ;
+        chapterSelect.add(option);
     }else{
         chapterSelect.disabled = false ;
         const url = `http://localhost/getChapter?category=${categorySelect.value}` ;

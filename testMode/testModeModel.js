@@ -198,4 +198,13 @@ const reRangeProb = (userid, category, chapter) => {
         
     });
 };
-module.exports = {setTestWords, setTestWordsWithProb, adjustProb, reRangeProb} ;
+
+const recordScore = (userid, category, chapter, score) => {
+    const query = `INSERT INTO TestResult (userid, category, chapter, score, time) VALUES (?,?,?,?,CURRENT_TIMESTAMP)`  ;
+    db.query(query, [userid, category, chapter, score], (err, result) => {
+        if(err){
+            console.log("insert score error") ;
+        }
+    })
+} 
+module.exports = {setTestWords, setTestWordsWithProb, adjustProb, reRangeProb, recordScore} ;

@@ -193,7 +193,8 @@ socket.on("testAnswerResponse", (data) => {
 
 const goToEnd = async () => {
     cook = await getCookie() ;
-    socket.emit("deleteTestRecord", {token:cook,category:categorySelect.value, chapter:chapterSelect.value}) ;
+    const score = Math.floor(finalScore) ;
+    socket.emit("deleteTestRecord", {token:cook,category:categorySelect.value, chapter:chapterSelect.value, score:score}) ;
     questionNumber = initQuestionNumber ;
     testPage.style.display = "none" ;
     endPage.style.display = "flex" ;
