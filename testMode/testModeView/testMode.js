@@ -45,6 +45,7 @@ const updateCategory = async() => {
 
 const getCookie = async () => {
     const allCookies = document.cookie;
+    console.log(allCookies, "from get coookie") ;
     const cookiesArray = allCookies.split(';');
     for (let i of cookiesArray){
         const [name, token] = i.split("=") ;
