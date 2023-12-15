@@ -237,7 +237,7 @@ const updateCategory = async() => {
 
     }else{
         chapterSelect.disabled = false ;
-        const url = `http://localhost/getChapter?category=${categorySelect.value}` ;
+        const url = `https://kimery.store/getChapter?category=${categorySelect.value}` ;
         const response = await fetch(url, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
