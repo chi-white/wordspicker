@@ -31,7 +31,7 @@ const signup = async () => {
             'provider': 'native'
         };
 
-        const url = "http://localhost/api/1.0/user/signup";
+        const url = "https://kimery.store/user/signup";
 
         const response = await fetch(url, {
             method: 'POST',
@@ -78,7 +78,7 @@ const login = async () => {
             'password': password
         };
 
-        const loginurl = 'http://localhost/api/1.0/user/login';
+        const loginurl = 'https://kimery.store/api/1.0/user/login';
         const response = await fetch(loginurl, {
             method: 'POST',
             headers: {
