@@ -31,7 +31,7 @@ const updateCategory = async() => {
         chapterSelect.add(option);
     }else{
         chapterSelect.disabled = false ;
-        const url = `http://localhost/getChapter?category=${categorySelect.value}` ;
+        const url = `https://kimery.store/getChapter?category=${categorySelect.value}` ;
         const response = await fetch(url, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
@@ -80,7 +80,7 @@ const draw = (timestampsArray, scoreArray) => {
 
 document.getElementById("chapter").addEventListener("change", async () => {
     if(chapterSelect.value != ""){
-        const url = `http://localhost/diagram?category=${categorySelect.value}&chapter=${chapterSelect.value}` ;
+        const url = `https://kimery.store/diagram?category=${categorySelect.value}&chapter=${chapterSelect.value}` ;
         const response = await fetch(url, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
@@ -97,28 +97,3 @@ document.getElementById("chapter").addEventListener("change", async () => {
 
 
 
-
-// var data = [{
-//     x: [1, 2, 3, 4, 5],
-//     y: [10, 11, 12, 13, 14],
-//     type: 'scatter'
-//   }];
-  
-//   var layout = {
-//     title: 'Simple Chart',
-//     xaxis: {
-//       title: 'X-axis'
-//     },
-//     yaxis: {
-//       title: 'Y-axis'
-//     },
-//     paper_bgcolor: 'rgba(0, 0, 0, 0)',  
-//     plot_bgcolor: 'rgba(0, 0, 0, 0)',   
-//     font: {
-//         color: 'white'  // set font color to white
-//       }
-//   };
-
- 
-  
-//   Plotly.newPlot('chart', data, layout);
