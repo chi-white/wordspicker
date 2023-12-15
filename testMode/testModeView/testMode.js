@@ -50,6 +50,8 @@ const getCookie = async () => {
     console.log(cookiesArray, "from get coookie") 
     for (let i of cookiesArray){
         const [name, token] = i.split("=") ;
+        console.log("name", name) ;
+        console.log("token", token) ;
         if(name == "token"){
             return token ;
         }
