@@ -47,6 +47,7 @@ const getCookie = async () => {
     const allCookies = document.cookie;
     console.log(allCookies, "from get coookie") ;
     const cookiesArray = allCookies.split(';');
+    console.log(cookiesArray, "from get coookie") 
     for (let i of cookiesArray){
         const [name, token] = i.split("=") ;
         if(name == "token"){
