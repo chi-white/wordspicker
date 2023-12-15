@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="doublegame.css">
+  <title>Words Picker</title>
+</head>
+<body>
+
+  <div class="banner">
+    <button id="backButton" onclick="back()">
+      🔙
+    </button>
+    <button class="homeButton" onclick="home()">
+      🏠
+    </button>
+    <button id="logoutButton" onclick="logout()">
+      🔚
+    </button>
+  </div>
+
+<div id="startMatchPage">
+  <label for="subCategory">Category:</label>
+    <select id="category" onchange="updateCategory()">
+      <option value="">Please select</option>
+      <option value="test">test</option>
+      <option value="toefl">toefl</option>
+    </select>
+  <label for="chapter">Chapter:</label>
+    <select id="chapter" disabled>
+        <option value="">Please choose category</option>
+    </select>
+  <button id="startMatchButton" onclick="matching()">Start Match</button>
+</div>
+
+<div id="waitingPage" style="display: none;">
+  <div id="waitingBlock">
+    <p>W</p>
+    <p>a</p>
+    <p>i</p>
+    <p>t</p>
+    <p>i</p>
+    <p>n</p>
+    <p>g</p>
+    <p>.</p>
+    <p>.</p>
+    <p>.</p>
+  </div>
+  <button id="cancelMatch" onclick="cancelMatch()">Cancel</button>
+</div>
+
+<div id="gamePage" style="display: none;">
+  <div id="time">6</div>
+  <div id="wordsdisplay">ok</div>
+  <div id="myScoreWord">Your Score</div>
+  <div id="myScore" value="0">0</div>
+  <div class="progress-container" id="myBarContainer">
+    <div class="progress-bar" id="myBar"></div>
+  </div>
+  <div id="gamePage-myinfo"></div>
+  <div id="yourScoreWord">Opponent Score</div>
+  <div id="yourScore" value="0">0</div>
+  <div class="progress-container" id="yourBarContainer">
+    <div class="progress-bar" id="yourBar"></div>
+  </div>
+  <div id="gamePage-yourinfo"></div>
+  <div id="correct-ans"></div>
+  <input id="wordsinput" placeholder="type" autocomplete="off">
+</div>
+
+<div id="endPage" style="display: none">
+  <div id="result">I win</div>
+  <div id="container">
+    <div class="score" id="myScorePlace-container">
+      <p>Your Score</p>
+      <p id="myScorePlace">55</p>
+    </div>
+    <div class="score" id="yourScorePlace-container">
+      <p>Opponent's Score</p>
+      <p id="yourScorePlace">0</p>
+    </div>
+  </div>
+  <div id="endPage-button">
+    <button id="backMainPage" class="button" onclick="backMain()">Back to Main</button>
+    <button id="backStartMatchPage" class="button" onclick="backStartMatch()">Start Match</button>
+    <button id ="backWaitingPage" class="button" onclick="backWaiting()">Rematch</button>
+  </div>
+  
+</div>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+<script src="doublegame.js"></script>
+
+</body>
+</html>

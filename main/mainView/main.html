@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <title>Words Picker</title>
+</head>
+<body>
+    <div class="banner">
+        <div></div>
+        <button class="homeButton" onclick="home()">
+          WORDS PICKER !
+        </button>
+        <button id="logoutButton" onclick="logout()">
+          🔚
+        </button>
+    </div>
+    
+   
+    <div id="goToGameButton" onclick="doubleGame()" style="background-color: rgb(141, 203, 165);">
+        Double Game
+    </div>
+    <div id="testMode" onclick="testMode()" style="background-color: rgb(106, 174, 111);">test</div>
+    <div id="practiceMode" onclick="practiceMode()" style="background-color: rgb(6, 169, 41);">Words Review</div>
+    <div id="chart" style="background-color: rgb(18, 105, 51);">
+        <select id="category" onchange="updateCategory()">
+            <option value="">Category</option>
+            <option value="test">test</option>
+            <option value="toefl">toefl</option>
+            <option value="favorite">favorite</option>
+          </select>
+        <select id="chapter" disabled>
+            <option value="">Chapter</option>
+        </select>
+    </div>
+
+
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

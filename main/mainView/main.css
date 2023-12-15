@@ -1,0 +1,128 @@
+
+body { 
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 300px;
+    margin: 0;
+    background-color: #1c3349; /* 墨綠色 */
+    color: #ffffff; /* 白色文字 */
+    font-family: 'Arial', sans-serif; /* 使用 Arial 字體 */
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50; 
+    color: #ffffff; 
+    border: none;
+    border-radius: 5px;
+  }
+  
+  label {
+    font-size: 18px; /* 調整標籤字體大小 */
+    margin-bottom: 8px;
+  }
+  
+  .banner {
+    background-color: #4CAF50;
+    padding: 3px;
+    display: flex; /* 使用 Flex 布局 */
+    justify-content: space-between; /* 将子元素分散对齐，确保最左边和最右边 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+  
+  .banner button {
+    background-color: #4CAF50;
+    padding: 8px 12px; 
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* 添加背景色变化的动画效果 */
+  }
+  
+  
+  
+  .banner button:hover {
+    background-color: #1c3349; /* 懸停時的背景色 */
+  }
+  
+  .background-container {
+    overflow: hidden;
+    position: relative;
+}
+
+
+
+#goToGameButton,
+#testMode,
+#practiceMode {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    font-weight: bold; 
+    font-size: 24px; 
+    z-index: 444;
+    background-color: rgba(0, 0, 0, 0); 
+    transition: background-color 0.3s ease; 
+}
+
+#chart{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+#chart select {
+position: absolute;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+  background-color: #4CAF50;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  z-index:45;
+}
+
+#chapter{
+  top:5px;
+  left:90px;
+}
+
+#category{
+  top:5px;
+  left:2px ;
+}
+
+select {
+  padding: 2px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50; 
+  color: #ffffff; 
+  width: 80px; 
+}
+
+ select:focus {
+  outline: none;
+  box-shadow: 0 0 5px #ffffff; /* 白色陰影 */
+  max-height: 200px; /* 選單被選擇時高度展開為 200px（根據需求調整） */
+} 
+
+ select option {
+  background-color: #4CAF50; /* 綠色背景 */
+  color: #ffffff; /* 白色文字 */
+  transition: max-height 0.5s ease; /* 添加動畫效果 */
+} 
+
+
+

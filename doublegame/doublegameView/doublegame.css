@@ -1,0 +1,352 @@
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #1c3349; /* 墨綠色 */
+  color: #ffffff; /* 白色文字 */
+  font-family: 'Arial', sans-serif; /* 使用 Arial 字體 */
+}
+
+
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #4CAF50; 
+  color: #ffffff; 
+  border: none;
+  border-radius: 5px;
+}
+
+label {
+  font-size: 18px; /* 調整標籤字體大小 */
+  margin-bottom: 8px;
+}
+
+.banner {
+  background-color: #4CAF50;
+  padding: 3px;
+  display: flex; /* 使用 Flex 布局 */
+  justify-content: space-between; /* 将子元素分散对齐，确保最左边和最右边 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.banner button {
+  background-color: #4CAF50;
+  padding: 8px 12px; 
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* 添加背景色变化的动画效果 */
+}
+
+
+
+.banner button:hover {
+  background-color: #1c3349; /* 懸停時的背景色 */
+}
+
+
+#startMatchPage label,
+#startMatchPage select,
+#startMatchPage button {
+  display: block;
+  margin: 10px 0;
+}
+
+select {
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50; 
+  color: #ffffff; 
+  width: 400px; 
+}
+
+select:focus {
+  outline: none;
+  box-shadow: 0 0 5px #ffffff; /* 白色陰影 */
+  max-height: 200px; /* 選單被選擇時高度展開為 200px（根據需求調整） */
+}
+
+select option {
+  background-color: #4CAF50; /* 綠色背景 */
+  color: #ffffff; /* 白色文字 */
+  transition: max-height 0.5s ease; /* 添加動畫效果 */
+}
+
+#startMatchPage,
+#waitingPage,
+#gamePage,
+#endPage
+{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top:20px;
+  opacity: 0; 
+  animation: fadeInOut 0.5s ease-in-out forwards ;
+}
+
+#container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+  
+#myScorePlace-container,
+#yourScorePlace-container{
+  display: flex ;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+
+@keyframes rainbow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+#result {
+  background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff80, #0080ff, #0000ff, #8000ff);
+  -webkit-background-clip: text;
+  margin-bottom: 40px;
+  color: transparent;
+  font-size: 50px;
+  background-size: 200% 200%;
+  animation: rainbow 0.5s linear infinite; 
+}
+
+
+#endPage-button{
+  display: row ;
+  justify-content: space-between ;
+  gap:100px ;
+}
+@keyframes fadeInOut {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+/* ----- */
+@keyframes wave {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  25%, 25% {
+    transform: translateY(-10px) scale(1.2);
+  }
+  50% {
+    transform: translateY(-20px) scale(1);
+  }
+}
+
+#waitingPage #waitingBlock {
+  margin-bottom: 20px; 
+}
+
+#waitingPage #waitingBlock p {
+  display: inline-block;
+  margin: 0;
+  animation: wave 1s infinite;
+  font-size: 30px;
+}
+
+#waitingPage #waitingBlock p:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+#waitingPage #waitingBlock p:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+#waitingPage #waitingBlock p:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+#waitingPage #waitingBlock p:nth-child(5) {
+  animation-delay: 0.8s;
+}
+
+#waitingPage #waitingBlock p:nth-child(6) {
+  animation-delay: 1s;
+}
+
+#waitingPage #waitingBlock p:nth-child(7) {
+  animation-delay: 1.2s;
+}
+
+#waitingPage #waitingBlock p:nth-child(8) {
+  animation-delay: 1.4s;
+}
+
+#waitingPage #waitingBlock p:nth-child(9) {
+  animation-delay: 1.6s;
+}
+
+#waitingPage #waitingBlock p:nth-child(10) {
+  animation-delay: 1.8s;
+}
+
+/* --- */
+#gamePage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#wordsdisplay {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 200px;
+}
+
+#time {
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 20px; 
+}
+
+#myScore {
+  font-size: 20px;
+  position: absolute;
+  top: 25%;
+  left: 20%;
+}
+
+#myScoreWord{
+  font-size: 20px;
+  position: absolute;
+  top: 20%;
+  left: 15%;
+}
+
+#yourScoreWord{
+  font-size: 20px;
+  position: absolute;
+  top: 20%;
+  right: 12%;
+}
+
+#yourScore {
+  font-size: 20px;
+  position: absolute;
+  top: 25%;
+  right: 20%;
+}
+
+#wordsinput {
+  font-size: 16px;
+  text-align: center;
+  margin-top: 20px;
+  border: 2px solid #4CAF50; 
+  border-radius: 5px; 
+  padding: 10px; 
+  background-color: white; 
+  color: #4CAF50; 
+  outline: none; 
+}
+
+#wordsinput::placeholder {
+  color: #8F8F8F; 
+}
+
+/*------------*/
+@keyframes floatUp {
+  0% {
+    transform: translateY(100%); 
+    opacity: 0; 
+  }
+  50% {
+    opacity: 1; /* 透明度为1，完全不透明 */
+  }
+  100% {
+    transform: translateY(0%); /* 最终位置在顶部 */
+    opacity: 0; /* 透明度为0，完全透明 */
+  }
+}
+
+#gamePage-myinfo{
+  top:50%;
+  left: 25%;
+  position: absolute;
+  font-size: 20px;
+  opacity: 0;
+}
+
+#gamePage-yourinfo{
+  top:50%;
+  right: 25%;
+  position: absolute;
+  font-size: 20px;
+  opacity: 0;
+}
+
+.float-up {
+  animation: floatUp 2s ease-in-out; /* 动画时长为2秒，使用 ease-in-out 缓动函数 */
+}
+.progress-container {
+  width: 20px; 
+  height: 300px; 
+  background-color: #f1f1f1;
+  overflow: hidden;
+}
+
+#myBarContainer{
+  top:30%;
+  left: 19.6%;
+  position: absolute;
+}
+
+#yourBarContainer{
+  top:30%;
+  right: 19.6%;
+  position: absolute;
+}
+.progress-bar {
+  position: absolute;
+  width: 100%;
+  height: 0; 
+  bottom: 0;
+  background-color: #4CAF50;
+  transition: height 1s linear;
+}
+
+.score {
+  display: flex;
+  flex-direction : row ;
+  justify-content: space-between;
+  width: 200px; /* 根据需要调整宽度 */
+  margin-bottom: 10px; /* 根据需要调整间距 */
+}
+
+#correct-ans {
+  font-size: 20px;
+  margin: 20px ;
+  position: absolute ;
+}

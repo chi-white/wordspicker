@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="practiceMode.css">
+    <title>Words Picker</title>
+  </head>
+  <body>
+    <div class="banner">
+      <button id="backButton" onclick="back()">
+        🔙
+      </button>
+      <button class="homeButton" onclick="home()">
+        🏠
+      </button>
+      <button id="logoutButton" onclick="logout()">
+        🔚
+      </button>
+    </div>
+
+
+    <div id="selectPage">
+      <label for="subCategory">Category:</label>
+        <select id="category" onchange="updateCategory()">
+          <option value="">Please select</option>
+          <option value="test">test</option>
+          <option value="toefl">toefl</option>
+          <option value="favorite">favorite</option>
+        </select>
+      <label for="chapter">Chapter:</label>
+        <select id="chapter" disabled>
+            <option value="">Please choose category</option>
+        </select>
+      <button id="selectButton" onclick="generateFlashcards()">Select Chapter</button>
+
+    </div>
+
+
+    <div id="wordPage" style="display: none;">
+      <div id="flashcardContainer"></div>
+      <div id="overlay" onclick="overlayClick(event)">
+        <button onclick="showPrevFlashcard()" id="prevButton">⬅️</button>
+        <div id="popup">
+          <div id="flashcardDetail" class="flashcardDetail"></div>
+        </div>
+        <button onclick="showNextFlashcard()" id="nextButton">➡️</button>
+      </div>
+    </div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
+    <script src="practiceMode.js"></script>
+  </body>
+</html>
+
+
+
+
+
+

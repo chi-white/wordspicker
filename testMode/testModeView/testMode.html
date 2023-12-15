@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="testMode.css">
+    <title>Words Picker</title>
+  </head>
+  <body>
+    <div class="banner">
+      <button id="backButton" onclick="back()">
+        🔙
+      </button>
+      <button class="homeButton" onclick="home()">
+        🏠
+      </button>
+      <button id="logoutButton" onclick="logout()">
+        🔚
+      </button>
+    </div>
+
+    <div id="selectPage">
+      <label for="subCategory">Category:</label>
+        <select id="category" onchange="updateCategory()">
+          <option value="">Please select</option>
+          <option value="test">test</option>
+          <option value="toefl">toefl</option>
+        </select>
+      <label for="chapter">Chapter:</label>
+        <select id="chapter" disabled>
+            <option value="">Please choose category</option>
+        </select>
+        <label for="questionType">Question Type : </label>
+        <select id="questionType">
+            <option value="EtoC">English to Chinese</option>
+            <option value="CtoE">Chinese to English</option>
+            <option value="Mix">Mix</option>
+        </select>
+        <label for="mode">Mode</label>
+        <select id="mode">
+            <option value="ALL">All Words</option>
+            <option value="UCB">Personal</option>
+            <option value="RANDOM">Random</option>
+        </select>
+      <button id="selectButton" onclick="questionRequest()">Start Test</button>
+    </div>
+
+    <div id="testPage" style="display: none">
+        <div id="time"></div>
+        <div id="wordsdisplay"></div>
+        <div id="correct"></div>
+        <div id="revise"></div>
+        <input id="wordsinput" placeholder="type" autocomplete="off">
+    </div>
+
+
+    <div id="endPage" style="display: none;">
+      <div id="finalScore"></div>
+      <div id="errorRecord"></div>
+      <div id="endPage-button">
+        <button id="backMainPage" class="button" onclick="backMain()">Back to Main</button>
+        <button id="backSelectPage" class="button" onclick="backSelect()">Start Test</button>
+        <button id ="backTest" class="button" onclick="backTest()">Retest</button>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script src="testMode.js"></script>
+  </body>
+</html>

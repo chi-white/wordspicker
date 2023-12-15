@@ -1,0 +1,286 @@
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #1c3349; /* 墨綠色 */
+  color: #ffffff; /* 白色文字 */
+  font-family: 'Arial', sans-serif; /* 使用 Arial 字體 */
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #4CAF50; 
+  color: #ffffff; 
+  border: none;
+  border-radius: 5px;
+}
+
+label {
+  font-size: 18px; /* 調整標籤字體大小 */
+  margin-bottom: 8px;
+}
+
+.banner {
+  background-color: #4CAF50;
+  padding: 3px;
+  display: flex; /* 使用 Flex 布局 */
+  justify-content: space-between; /* 将子元素分散对齐，确保最左边和最右边 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.banner button {
+  background-color: #4CAF50;
+  padding: 8px 12px; 
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* 添加背景色变化的动画效果 */
+}
+
+
+
+.banner button:hover {
+  background-color: #1c3349; /* 懸停時的背景色 */
+}
+
+#selectPage label,
+#selectPage select,
+#selectPage button {
+  display: flex;
+  margin: 10px 0;
+} 
+
+
+select {
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50; 
+  color: #ffffff; 
+  width: 400px; 
+}
+
+select:focus {
+  outline: none;
+  box-shadow: 0 0 5px #ffffff; /* 白色陰影 */
+  max-height: 200px; /* 選單被選擇時高度展開為 200px（根據需求調整） */
+}
+
+select option {
+  background-color: #4CAF50; /* 綠色背景 */
+  color: #ffffff; /* 白色文字 */
+  transition: max-height 0.5s ease; /* 添加動畫效果 */
+}
+
+#selectPage
+{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top:20px;
+  opacity: 0; 
+  animation: fadeInOut 0.5s ease-in-out forwards ;
+}
+
+@keyframes fadeInOut {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/**----------------**/
+
+  #flashcardContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    margin-top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .flashcard {
+    border-radius: 8px;
+    background-color: #737070;
+    width: 600px;
+    padding: 20px;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    animation: fadeIn 1s ease-in-out;
+    opacity: 0;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .flashcard p {
+    margin: 10px 0;
+  }
+
+  .flashcard-header {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .flashcard-example {
+    margin-top: 20px;
+  }
+
+  .flashcardDetail {
+    border-radius: 8px;
+    background-color: #737070;
+    width: 600px;
+    padding: 20px;
+    margin: 0px;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    position: relative;
+    /* opacity: 0; */
+  }
+
+  .star {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 999;
+  }
+      
+
+
+  .firework-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .firework {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: url('icegif-85.gif') no-repeat;
+    background-size: cover;
+    animation: explode 0.5s ease-out;
+  }
+
+  @keyframes explode {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+
+  .notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+
+  #controlSidebar {
+    cursor: pointer;
+  }
+
+  #sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
+
+  #sidebar a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
+
+  #sidebar a:hover {
+    color: #f1f1f1;
+  }
+
+  #sidebar .close-btn {
+    position: absolute;
+    top: 0;
+    left: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
+
+#overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+}
+
+#popup {
+  background: #737070;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(50, 48, 48, 0.5);
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+#prevButton,
+#nextButton {
+    font-size: 24px;
+    background: none;
+    border: none;
+}
+
+#nextButton {
+  right:20%;
+}
+
+#logoutButton{
+  display: inline-block;
+  margin-right: 10px; /* 适当调整右边距 */
+  cursor: pointer;
+}
