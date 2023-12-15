@@ -52,7 +52,7 @@ const getCookie = async () => {
         const [name, token] = i.split("=") ;
         console.log("name", name) ;
         console.log("token", token) ;
-        console.log("token", token, token=="token") ;
+        console.log("token", name, name=="token") ;
         if(name == "token"){
             return token ;
         }
