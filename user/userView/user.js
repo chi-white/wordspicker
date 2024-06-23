@@ -31,7 +31,8 @@ const signup = async () => {
             'provider': 'native'
         };
 
-        const url = "https://kimery.store/user/signup";
+        // const url = "https://kimery.store/user/signup";
+        const url = "http://localhost/user/signup" ;
 
         const response = await fetch(url, {
             method: 'POST',
@@ -44,7 +45,7 @@ const signup = async () => {
         if (responseData.err) {
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
+                title: 'Oops...haha',
                 text: responseData.err,
             });
         } else {
@@ -78,7 +79,8 @@ const login = async () => {
             'password': password
         };
 
-        const loginurl = 'https://kimery.store/api/1.0/user/login';
+        // const loginurl = 'https://kimery.store/api/1.0/user/login';
+        const loginurl = "http://localhost/user/login" ;
         const response = await fetch(loginurl, {
             method: 'POST',
             headers: {
