@@ -32,7 +32,7 @@ const signup = async () => {
         };
 
         // const url = "https://kimery.store/user/signup";
-        const url = "http://54.66.160.176/user/signup" ;
+        const url = "http://54.66.160.176:3000/user/signup" ;
 
         const response = await fetch(url, {
             method: 'POST',
@@ -80,7 +80,7 @@ const login = async () => {
         };
 
         // const loginurl = 'https://kimery.store/api/1.0/user/login';
-        const loginurl = "http://54.66.160.176/user/login" ;
+        const loginurl = "http://54.66.160.176:3000/user/login" ;
         const response = await fetch(loginurl, {
             method: 'POST',
             headers: {
