@@ -129,7 +129,7 @@ const overlayClick = (event) => {
 
 const deleteFavorite = async (wordId) => {
     // const url = `https://kimery.store/deleteFavorite?wordId=${wordId}` ;
-    const url = `http:/localhost/deleteFavorite?wordId=${wordId}` ;
+    const url = `http:/54.66.160.176/deleteFavorite?wordId=${wordId}` ;
 
     const response = await fetch(url, {
         method : "GET",
@@ -142,7 +142,7 @@ const deleteFavorite = async (wordId) => {
 
 const queryFavorite = async (wordId) => {
     // const url = `https://kimery.store/queryFavorite?wordId=${wordId}` ;
-    const url = `http://localhost/queryFavorite?wordId=${wordId}` ;
+    const url = `http://54.66.160.176/queryFavorite?wordId=${wordId}` ;
     const response = await fetch(url, {
         method : "GET",
         headers : {'Content-Type': 'application/json'},
@@ -155,7 +155,7 @@ const queryFavorite = async (wordId) => {
 
 const addFavorite = async(wordId) => {
     // const url = `https://kimery.store/addFavorite?wordId=${wordId}` ;
-    const url = `http://localhost/addFavorite?wordId=${wordId}` ;
+    const url = `http://54.66.160.176/addFavorite?wordId=${wordId}` ;
     const response = await fetch(url, {
         method : "GET",
         headers : {'Content-Type': 'application/json'},
@@ -185,10 +185,10 @@ const updateWords = async (category) => {
         let url ;
         if (category === "favorite"){
             // url = `https://kimery.store/getFavoriteWords` ;
-            url = `http://localhost/getFavoriteWords` ;
+            url = `http://54.66.160.176/getFavoriteWords` ;
         }else{
             // url = `https://kimery.store/getWords?category=${categorySelect.value}&chapter=${chapterSelect.value}` ;
-            url = `http://localhost/getWords?category=${categorySelect.value}&chapter=${chapterSelect.value}` ;
+            url = `http://54.66.160.176/getWords?category=${categorySelect.value}&chapter=${chapterSelect.value}` ;
         }
         const response = await fetch(url, {
             method : "GET",
@@ -213,7 +213,7 @@ const updateCategory = async() => {
     }else{
         chapterSelect.disabled = false ;
         // const url = `https://kimery.store/getChapter?category=${categorySelect.value}` ;
-        const url = `http://localhost/getChapter?category=${categorySelect.value}` ;
+        const url = `http://54.66.160.176/getChapter?category=${categorySelect.value}` ;
         const response = await fetch(url, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
