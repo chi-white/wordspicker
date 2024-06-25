@@ -1,5 +1,5 @@
 // const socket = io('https://kimery.store');
-const socket = io('http://54.66.160.176:3000') ;
+const socket = io('http://54.66.160.176') ;
 
 let  roomName;
 let countdown ;
@@ -239,7 +239,7 @@ const updateCategory = async() => {
     }else{
         chapterSelect.disabled = false ;
         // const url = `https://kimery.store/getChapter?category=${categorySelect.value}` ;
-        const url = `http://54.66.160.176:3000/getChapter?category=${categorySelect.value}` ;
+        const url = `http://54.66.160.176/getChapter?category=${categorySelect.value}` ;
         const response = await fetch(url, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
