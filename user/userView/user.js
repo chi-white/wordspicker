@@ -31,9 +31,7 @@ const signup = async () => {
             'provider': 'native'
         };
 
-        // const url = "https://kimery.store/user/signup";
-        const url = "http://54.66.160.176/user/signup" ;
-
+        const url = "https://kimery.store/user/signup";
         const response = await fetch(url, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -79,8 +77,7 @@ const login = async () => {
             'password': password
         };
 
-        // const loginurl = 'https://kimery.store/api/1.0/user/login';
-        const loginurl = "http://54.66.160.176/user/login" ;
+        const loginurl = 'https://kimery.store/user/login';
         const response = await fetch(loginurl, {
             method: 'POST',
             headers: {
