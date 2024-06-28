@@ -1,13 +1,15 @@
 version : '3.1'
 services :
+
   backend :
-    image : wordpicker-backend:1.0 
-    ports :
-      - 3000:3000
+    image : king0209/wordpicker-backend:1.1 
+
+
   nginx :
     image : nginx
     ports :
       - 80:80
+      - 433:433
     depends_on : 
       - "backend"
     volumes:

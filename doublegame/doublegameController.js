@@ -1,65 +1,66 @@
 const doubleGameModel = require('./doublegameModel') ;
 
-const questionNumber = 10 ;
+const questionNumber = 2 ;
+
+const getRandomElement = (questionNumber) => {
+  const array = [] ;
+  let p ;
+  for(let i=0; i<questionNumber; i++){
+    p = Math.random() ;
+    if(p<0.5) array.push("EtoC") ;
+    else array.push("CtoE") ;
+  }
+  return array ;
+}
+
+const findPair = (waitingUsers, data, id) => {
+  for(let key in waitingUsers){
+    console.log( waitingUsers[key], data.chapter, waitingUsers) ;
+    if(key !== id && waitingUsers[key].category === data.category && waitingUsers[key].chapter === data.chapter)
+      return key ;
+  }
+  return null ;
+} 
+
 
 const handleDoublegameSocket = (io) => {
-    const waitingUsers = [] ;
+    const waitingUsers = {} ;
     const roomWords = {} ;
     const roomQuestionType = {} ;
     io.on('connection', (socket) => {
       console.log('doublegame connection');
 
-      const getRandomElement = (questionNumber) => {
-        let p ;
-        const array = [] ;
-        for (let i=0; i<questionNumber; i++){
-          p = Math.random();
-          if(p < 0.5){
-            array.push("EtoC") ;
-          }else{
-            array.push("CtoE") ;
-          }
-        }
-        return array ;
-      }
-
       socket.on('match', async (data) => {
         console.log(`${socket.id}, server receive match request`);
-        waitingUsers.push({id:socket.id, category: data.category, chapter: data.chapter}) ;
-        const myIndex = waitingUsers.findIndex(user => user.id === socket.id) ;
-        for(let i=0; i<waitingUsers.length - 1; i++){
-          if(i != myIndex){
-            if(waitingUsers[i].category === data.category && waitingUsers[i].chapter === data.chapter){
-              const user1 = waitingUsers[myIndex].id ;
-              const user2 = waitingUsers[i].id ;
-              try{
-                const roomName = `room_${user1}_${user2}` ;
-                roomQuestionType[roomName] = getRandomElement(questionNumber) ;
-                roomWords[roomName] = await doubleGameModel.getWords(data.category, data.chapter, questionNumber) ;
-                io.to(user1).emit('joinRoom', {roomName : roomName}) ;
-                io.to(user2).emit('joinRoom', {roomName : roomName}) ;
-                waitingUsers.splice(Math.max(i, myIndex), 1) ;
-                waitingUsers.splice(Math.min(i, myIndex), 1) ;
-                break ;
-              }catch(err){
-                io.to(user1).emit("err", {err: err}) ;
-                io.to(user2).emit("err", {err: err}) ;
-                console.log(err) ;
-              }
+        waitingUsers[socket.id] = {category:data.category, chapter: data.chapter} ;
+        console.log("curr", socket.id, data.category, data.chapter) ;
+        const pairId = findPair(waitingUsers, data, socket.id) ;
+          try{
+            if(pairId !== null){
+              delete waitingUsers[pairId] ;
+              delete waitingUsers[socket.id] ;
+              const roomName =  '${socket.id}${pairId}' ;
+              roomQuestionType[roomName] = getRandomElement(questionNumber) ;
+              roomWords[roomName] = await doubleGameModel.getWords(data.category, data.chapter, questionNumber) ;
+              io.to(pairId).emit('joinRoom', {roomName : roomName}) ;
+              io.to(socket.id).emit('joinRoom', {roomName : roomName}) ;
             }
+          }catch(err){
+            io.to(pairId).emit("err", {err: err}) ;
+            io.to(socket.id).emit("err", {err: err}) ;
+            console.log(err) ;
           }
-        } 
       });
 
 
       socket.on("cancelMatch", () => {
-        const index = waitingUsers.findIndex(user => user.id === socket.id) ;
-        if(index !== -1) {
-          waitingUsers.splice(index, 1) ;
-        }else{
-          console.log("element not found") ;
+        console.log(`${socket.id} cancels match`) ;
+        try{
+          delete waitingUsers[socket.id] ;
+          io.to(socket.id).emit("cancelMatch") ;
+        }catch(err){
+          console.log(`${socket.id} cancel fail`) ;
         }
-        io.to(socket.id).emit("cancelMatch") ;
       })
   
       socket.on('joinRoom', (data) => {
@@ -70,19 +71,26 @@ const handleDoublegameSocket = (io) => {
 
       socket.on('disconnect', () => {
         console.log('doublegame disconnection');
-        const index = waitingUsers.findIndex(user => user.id === socket.id) ;
-        waitingUsers.splice(index, 1) ;
+        delete waitingUsers[socket.id] ;
       });
   
       socket.on('getWords', async (data) => {
         const roomName = data.roomName ;
         const index = data.index ;
         if(roomQuestionType[roomName][index] === "EtoC"){
-          io.to(socket.id).emit('getWords', {word:roomWords[roomName][index].english, abbreviation:roomWords[roomName][index].abbreviation , roomName: roomName, index:index}) ;
+          io.to(socket.id).emit('getWords', {word:roomWords[roomName][index].english, 
+            abbreviation:roomWords[roomName][index].abbreviation , 
+            roomName: roomName, 
+            index:index
+          }) ;
         }else{
           const question = roomWords[roomName][index].chinese.split('；');
           const randomIndex = Math.floor(Math.random() * (question.length));
-          io.to(socket.id).emit('getWords', {word:question[randomIndex], abbreviation:roomWords[roomName][index].abbreviation, roomName: roomName, index:index}) ;
+          io.to(socket.id).emit('getWords', {word:question[randomIndex], 
+            abbreviation:roomWords[roomName][index].abbreviation, 
+            roomName: roomName, 
+            index:index
+          }) ;
         }
       }) ;
 
@@ -92,7 +100,7 @@ const handleDoublegameSocket = (io) => {
         const score = data.score ;
         if(roomQuestionType[roomName][index] === "EtoC"){
           const answer = roomWords[roomName][index].chinese.split('；');
-          if (answer.includes(data.answer)){         
+          if (answer.includes(data.answere.toLowerCase())){         
             io.to(data.roomName).emit('answerResponse', {answer:true, id: socket.id, score:score}) ;
           }else{
             io.to(data.roomName).emit('answerResponse', {answer:false, id: socket.id, word:roomWords[roomName][index].chinese}) ;

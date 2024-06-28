@@ -5,7 +5,7 @@ let  roomName;
 let countdown ;
 let currentEvent ;
 let answerNumber = 0 ;
-const questionNumber = 3 ;
+const questionNumber = 2 ;
 const input = document.getElementById('wordsinput') ;
 const yourScore = document.getElementById('yourScore') ;
 const myScore = document.getElementById('myScore') ;
@@ -28,6 +28,7 @@ const myinfo = document.getElementById('gamePage-myinfo');
 const yourinfo = document.getElementById('gamePage-yourinfo');
 const correct_ans = document.getElementById("correct-ans") ;
 var sendAns = false ;
+
 const matching = () => {
     if(categorySelect.value === "" || chapterSelect.value === ""){
         Swal.fire({
