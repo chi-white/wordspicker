@@ -9,6 +9,7 @@ services :
     image : nginx
     ports :
       - 80:80
+      - 433:433
     depends_on : 
       - "backend"
     volumes:
