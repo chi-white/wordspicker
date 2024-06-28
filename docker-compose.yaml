@@ -16,3 +16,4 @@ services :
       - /etc/nginx/nginx.conf:/etc/nginx/nginx.conf
       - /etc/nginx:/etc/nginx
       - /var/log/nginx:/var/log/nginx
+      - /etc/letsencrypt:/etc/letsencrypt
