@@ -20,7 +20,7 @@ jobs:
 
       - name: Build and Push Docker image
         run: |
-         docker build -t ${{ secrets.DOCKER_USERNAME }}/wordpicker-backend:latest
+         docker build -t ${{ secrets.DOCKER_USERNAME }}/wordpicker-backend:latest .
          docker push ${{ secrets.DOCKER_USERNAME }}/wordpicker-backend:latest
 
          
