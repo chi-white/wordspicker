@@ -2,7 +2,7 @@ version : '3.1'
 services :
 
   backend :
-    image : king0209/wordpicker-backend:1.2 
+    image : king0209/wordpicker-backend:latest
 
 
   nginx :
