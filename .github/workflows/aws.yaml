@@ -39,4 +39,4 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} ec2-user@ec2-54-66-160-176.ap-southeast-2.compute.amazonaws.com
+          ssh -o StrictHostKeyChecking=no ec2-user@ec2-54-66-160-176.ap-southeast-2.compute.amazonaws.com
