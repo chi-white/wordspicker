@@ -1,3 +1,4 @@
+const {host} = require('../../host') ;
 const toggleForm = (formId) => {
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
@@ -31,7 +32,7 @@ const signup = async () => {
             'provider': 'native'
         };
 
-        const url = "https://kimery.store/user/signup";
+        const url = "${host}/user/signup";
         const response = await fetch(url, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -77,7 +78,7 @@ const login = async () => {
             'password': password
         };
 
-        const loginurl = 'https://kimery.store/user/login';
+        const loginurl = '${host}/user/login';
         const response = await fetch(loginurl, {
             method: 'POST',
             headers: {

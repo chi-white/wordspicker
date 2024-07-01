@@ -1,3 +1,4 @@
+const {host} = require('../../host') ;
 const selectPage = document.getElementById("selectPage") ;
 const wordPage = document.getElementById("wordPage") ;
 const categorySelect = document.getElementById("category");
@@ -128,7 +129,7 @@ const overlayClick = (event) => {
 }
 
 const deleteFavorite = async (wordId) => {
-    const url = `https://kimery.store/deleteFavorite?wordId=${wordId}` ;
+    const url = `${host}/deleteFavorite?wordId=${wordId}` ;
 
     const response = await fetch(url, {
         method : "GET",
@@ -140,7 +141,7 @@ const deleteFavorite = async (wordId) => {
 }
 
 const queryFavorite = async (wordId) => {
-    const url = `https://kimery.store/queryFavorite?wordId=${wordId}` ;
+    const url = `${host}/queryFavorite?wordId=${wordId}` ;
     const response = await fetch(url, {
         method : "GET",
         headers : {'Content-Type': 'application/json'},
@@ -152,7 +153,7 @@ const queryFavorite = async (wordId) => {
 }
 
 const addFavorite = async(wordId) => {
-    const url = `https://kimery.store/addFavorite?wordId=${wordId}` ;
+    const url = `${host}/addFavorite?wordId=${wordId}` ;
     const response = await fetch(url, {
         method : "GET",
         headers : {'Content-Type': 'application/json'},
@@ -181,9 +182,9 @@ const updateWords = async (category) => {
     }else{
         let url ;
         if (category === "favorite"){
-            url = `https://kimery.store/getFavoriteWords` ;
+            url = `${host}/getFavoriteWords` ;
         }else{
-            url = `https://kimery.store/getWords?category=${categorySelect.value}&chapter=${chapterSelect.value}` ;
+            url = `${host}/getWords?category=${categorySelect.value}&chapter=${chapterSelect.value}` ;
         }
         const response = await fetch(url, {
             method : "GET",
@@ -207,7 +208,7 @@ const updateCategory = async() => {
         chapterSelect.add(option);
     }else{
         chapterSelect.disabled = false ;
-        const url = `https://kimery.store/getChapter?category=${categorySelect.value}` ;
+        const url = `${host}/getChapter?category=${categorySelect.value}` ;
         const response = await fetch(url, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},

@@ -1,3 +1,4 @@
+const {host} = require('../../host') ;
 const chapterSelect = document.getElementById("chapter") ;
 const categorySelect = document.getElementById("category") ;
 
@@ -31,7 +32,7 @@ const updateCategory = async() => {
         chapterSelect.add(option);
     }else{
         chapterSelect.disabled = false ;
-        const url = `https://kimery.store/getChapter?category=${categorySelect.value}` ;
+        const url = `${host}/getChapter?category=${categorySelect.value}` ;
         const response = await fetch(url, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
@@ -80,7 +81,7 @@ const draw = (timestampsArray, scoreArray) => {
 
 document.getElementById("chapter").addEventListener("change", async () => {
     if(chapterSelect.value != ""){
-        const url = `https://kimery.store/diagram?category=${categorySelect.value}&chapter=${chapterSelect.value}` ;
+        const url = `${host}/diagram?category=${categorySelect.value}&chapter=${chapterSelect.value}` ;
         const response = await fetch(url, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},

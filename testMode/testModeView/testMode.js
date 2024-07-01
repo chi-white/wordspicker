@@ -1,4 +1,5 @@
-const socket = io('https://kimery.store');
+const {host} = require('../../host') ;
+const socket = io(host);
 let currentEvent ;
 let answerNumber = 0;
 const categorySelect = document.getElementById("category");
@@ -26,7 +27,7 @@ const updateCategory = async() => {
         chapterSelect.disabled = true ;
     }else{
         chapterSelect.disabled = false ;
-        const url = `https://kimery.store/getChapter?category=${categorySelect.value}` ;
+        const url = `${host}/getChapter?category=${categorySelect.value}` ;
         const response = await fetch(url, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
