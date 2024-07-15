@@ -33,6 +33,7 @@ const tbody = document.getElementById('t');
 var connect = false ;
 let record = [] ;
 let inputContainer = "";
+let submit = false ;
 
 
 
@@ -42,7 +43,9 @@ const handleEnterKey = (event, roomName, index) => {
         inputContainer = inputValue ;
         input.value = "" ;
         input.disabled = true ;
+        submit = true ;
         const t = Number(time.textContent) ;
+        console.log("submit") ;
         socket.emit("submitAnswer", {input: inputValue, roomName : roomName, index:index, time:t}) ; ///??
         input.removeEventListener('keydown', currentEvent);
     }
@@ -110,12 +113,24 @@ socket.on("successfully join", ({roomName})=> {
     socket.emit("ready", {roomName:roomName}) ;
 })
 
-socket.on("timer", ({timing})=>{
-    time.textContent = timing ;
+socket.on("timer", ({timing, index, roomName})=>{
+    console.log(index) ;
+    if(timing>=0) time.textContent = timing ;
+    if(timing===0)input.disabled = true ;
+    if(timing===-1&&submit===false){
+        const inputValue = input.value ;
+        inputContainer = inputValue ;
+        input.value = "" ;
+        submit = true ;
+        const t = Number(time.textContent) ;
+        console.log("submit") ;
+        socket.emit("submitAnswer", {input: inputValue, roomName : roomName, index:index, time:t}) ;
+    } 
 })
 
 socket.on("startGame", ({word, abbreviation, index, roomName}) => {
     input.disabled = false ;
+    submit = false ;
     wordPlace.textContent  = word+` (${abbreviation}.)`;
     input.focus();
     correct_ans.textContent = " " ;
@@ -143,13 +158,14 @@ socket.on("endGame", ({question, index, answer})=> {
 })
 
 socket.on("answerResult", ({socketId, result, answer, score}) => {
+    console.log("got answer reuslt") ;
     if(socketId==socket.id){// us
         myinfo.textContent = "Correct !" ;
         if(!result) {
             correct_ans.textContent = answer ;
             myinfo.textContent = "Wrong ! " ;
          }
-        myScore.textContent = score.toString() ;
+        myScore.textContent = score.toFixed(1).toString() ;
         myBar.style.height = score.toString() + "%" ;
         triggerFloat(myinfo) ;
     }else{ //opponent
@@ -157,7 +173,7 @@ socket.on("answerResult", ({socketId, result, answer, score}) => {
         if(!result) {
             yourinfo.textContent = "Wrong ! " ;
          }
-        yourScore.textContent = score.toString() ;
+        yourScore.textContent = score.toFixed(1).toString() ;
         yourBar.style.height = score.toString() + "%" ;
         triggerFloat(yourinfo) ;
     }
@@ -210,7 +226,7 @@ const backWaiting = () => {
     tbody.innerHTML = "" ;
     record = [] ;
     socket.emit('match', {category: categorySelect.value, chapter: chapterSelect.value}) ;
-    resetTestPage() ;
+    resetGamePage() ;
 } ;
 
 

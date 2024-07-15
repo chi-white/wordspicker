@@ -33,7 +33,6 @@ const handleEnterKey = (event, roomName) => {
         inputContainer = inputValue ;
         input.value = "" ;
         input.disabled = true ;
-        const t = Number(time.textContent) ;
         socket.emit("submitAnswer", {input: inputValue, roomName : roomName}) ;
         input.removeEventListener('keydown', currentEvent);
     }
@@ -136,12 +135,11 @@ socket.on("startGame", ({word, abbreviation, roomName}) => {
 
 socket.on("timer", ({timing, roomName})=>{
     if(timing>=0) time.textContent = timing ;
-    if(timing===-1) input.disabled = true ;
-    if(timing===-2) {
+    if(timing===0) input.disabled = true ;
+    if(timing===-1) {
         const inputValue = input.value ;
         inputContainer = inputValue ;
         input.value = "" ;
-        const t = Number(time.textContent) ;
         socket.emit("submitAnswer", {input: inputValue, roomName : roomName}) ;
     }
 })

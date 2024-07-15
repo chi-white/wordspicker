@@ -67,7 +67,8 @@ const handleDoublegameSocket = (io) => {
               roomQuestion[roomName] = q ;
               roomAnswer[roomName] = a ;
               roomAbbrev[roomName] = abbrev ;
-              rooms[roomName] = {players:{}, timer: null, people:0} ;
+              // rooms[roomName] = {players:{}, timer: null, people:0} ;
+              rooms[roomName] = {players:{}, people:0} ;
               doubleAnscheck[roomName] = 0 ;
               dgio.to(pairId).emit('inviteRoom', {roomName : roomName}) ;
               dgio.to(socket.id).emit('inviteRoom', {roomName : roomName}) ;
@@ -115,6 +116,7 @@ const handleDoublegameSocket = (io) => {
           }) ;
           checkBothAnswered(dgio, roomName, index, input, roomQuestion[roomName][index]) ;
           }catch(error){
+            console.log("submit answer wrong", error) ;
             dgio.to(socket.id).emit("error") ;
           }
       })
@@ -154,23 +156,22 @@ const startGame = (dgio, roomName, index) => {
         throw new Error(`roomQuestion[${roomName}][${index}] is undefined`);
       }
 
-      room.timer = setTimeout(() => {
-        endGame(
-          dgio,
-          roomName,
-          index,
-        );
-        resolve(); 
-      }, 13000);
+      // room.timer = setTimeout(() => {
+      //   endGame(
+      //     dgio,
+      //     roomName,
+      //     index,
+      //   );
+      //   resolve(); 
+      // }, 13000);
 
       let remainTime = 11;
 
       const interval = setInterval(() => {
         remainTime--;
-        if (remainTime >= 0) {
-          dgio.to(roomName).emit("timer", { timing: remainTime });
-        }
-        if (remainTime < -2||doubleAnscheck[roomName]===2) {
+        dgio.to(roomName).emit("timer", { timing: remainTime, index:index, roomName:roomName });
+        
+        if (remainTime < -3||doubleAnscheck[roomName]===2) {
           clearInterval(interval);
           resolve() ;
         }
@@ -185,6 +186,7 @@ const startGame = (dgio, roomName, index) => {
       });
 
     } catch (error) {
+      console.log("ahahahahahahahahahahahahahahahahaha") ;
       dgio.to(roomName).emit("error");
       reject(error); 
     }
@@ -195,7 +197,7 @@ const startGame = (dgio, roomName, index) => {
 const checkBothAnswered = (dgio, roomName, index, input, question) => {
   if(doubleAnscheck[roomName] && doubleAnscheck[roomName]==2){
     const room = rooms[roomName] ;
-    clearTimeout(room.timer) ;
+    // clearTimeout(room.timer) ;
     endGame(dgio, roomName, index) ;
   }
 }
