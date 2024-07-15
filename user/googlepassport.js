@@ -15,7 +15,7 @@ passport.deserializeUser(function(obj, cb) {
 // google configuration
 
 
-console.log( process.env.GOOGLE_CLIENT_ID) ;
+console.log("from passport", process.env.GOOGLE_CLIENT_ID) ;
 
 // const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
