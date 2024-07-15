@@ -14,12 +14,14 @@ passport.deserializeUser(function(obj, cb) {
 
 // google configuration
 
+
+console.log( process.env.GOOGLE_CLIENT_ID) ;
+
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+
 passport.use(new GoogleStrategy({
-    clientID: GOOGLE_CLIENT_ID,
-    clientSecret: GOOGLE_CLIENT_SECRET,
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: `${host}/auth/google/callback`
   },
   function(accessToken, refreshToken, profile, done) {
