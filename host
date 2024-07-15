@@ -1,2 +1,0 @@
-const host = 'https://kimery.store' ;
-module.exports = {host} ;

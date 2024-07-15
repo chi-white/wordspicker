@@ -1,12 +1,13 @@
-const {host} = require('../../host') ;
+// const {host} = require('../../host.js') ;
+const host = 'https://kimery.store' ;
 
-const socket = io(host);
+const socket = io(host+"/doublegame");
 
 let  roomName;
 let countdown ;
 let currentEvent ;
 let answerNumber = 0 ;
-const questionNumber = 2 ;
+const questionNumber = 20 ;
 const input = document.getElementById('wordsinput') ;
 const yourScore = document.getElementById('yourScore') ;
 const myScore = document.getElementById('myScore') ;
@@ -28,9 +29,50 @@ const yourBar = document.getElementById("yourBar") ;
 const myinfo = document.getElementById('gamePage-myinfo');
 const yourinfo = document.getElementById('gamePage-yourinfo');
 const correct_ans = document.getElementById("correct-ans") ;
-var sendAns = false ;
+const tbody = document.getElementById('t');
+var connect = false ;
+let record = [] ;
+let inputContainer = "";
 
-const matching = () => {
+
+
+const handleEnterKey = (event, roomName, index) => {
+    if(event.keyCode === 13){
+        const inputValue = input.value ;
+        inputContainer = inputValue ;
+        input.value = "" ;
+        input.disabled = true ;
+        const t = Number(time.textContent) ;
+        socket.emit("submitAnswer", {input: inputValue, roomName : roomName, index:index, time:t}) ; ///??
+        input.removeEventListener('keydown', currentEvent);
+    }
+} ;
+
+const getCookie = async () => {
+    const allCookies = document.cookie;
+    const cookiesArray = allCookies.split(';');
+    for (let i of cookiesArray){
+        const [name, token] = i.split("=") ;
+        if(name.trim() == "token"){
+            return token ;
+        }
+    }
+    return null ;
+} ;
+
+
+const resetGamePage = () => {
+    myScore.textContent = "0" ;
+    yourScore.textContent = "0" ;
+    myBar.style.height = "0" ;
+    yourBar.style.height = "0" ;
+    correct_ans.textContent = "" ;
+    time.textContent = " " ;
+}
+
+
+
+const matching = async() => {
     if(categorySelect.value === "" || chapterSelect.value === ""){
         Swal.fire({
             icon: 'error',
@@ -38,200 +80,145 @@ const matching = () => {
             text: 'Please choose category and chapter!',
         });
     }else{
-        console.log('wait for matching') ; 
-        socket.emit('match', {category: categorySelect.value, chapter: chapterSelect.value}) ;
-        startMatchPage.style.display = "none" ;
-        waitingPage.style.display = "flex" ;
+        const cook = await getCookie() ;
+        if(cook){
+            socket.connect() ;
+            connect = true ;
+            socket.emit('match', {category: categorySelect.value, chapter: chapterSelect.value}) ;
+            startMatchPage.style.display = "none" ;
+            waitingPage.style.display = "block" ;
+            resetGamePage() ;
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'NO token! Please register or log in!',
+            });
+        }
+        
     }
 }
 
-socket.on("joinRoom", (data)=>{
-    socket.emit("joinRoom", {roomName : data.roomName}) ;
+
+socket.on("inviteRoom", ({roomName})=>{
+    socket.emit("joinRoom", {roomName:roomName}) ;
 }) ;
 
-socket.on("matchSucessfully", async (data) => {
-    roomName = data.roomName ;
-    waitingPage.style.display = 'none' ;
-    gamePage.style.display = "flex" ;
-    wordsIteration() ;
-}) ;
+socket.on("successfully join", ({roomName})=> {
+    waitingPage.style.display = "none" ;
+    gamePage.style.display = "block" ;
+    socket.emit("ready", {roomName:roomName}) ;
+})
 
-const wordsIteration = async() => {
-    const array = Array.from({ length: questionNumber}, (_, i) => i);
-    for (let i of array) {
-        await new Promise((resolve, reject) => {
-            socket.emit("getWords", { roomName: roomName, index: i });
-            socket.once('getWords', async (data) => {
-                correct_ans.textContent = "" ;
-                sendAns = false ;
-                await getWordsHandle(data) ;
-                input.value = "" ;
-                resolve() ;
-            }) ;
-        })
-    }
-    goToEnd() ;
-}
+socket.on("timer", ({timing})=>{
+    time.textContent = timing ;
+})
 
-const getWordsHandle = async (data) => {
-    answerNumber = 0 ;
-    const roomName = data.roomName ;
-    const index = data.index ;
-    wordPlace.textContent  = data.word+` (${data.abbreviation}.)`;
+socket.on("startGame", ({word, abbreviation, index, roomName}) => {
     input.disabled = false ;
+    wordPlace.textContent  = word+` (${abbreviation}.)`;
     input.focus();
-    await countdownAndReply(roomName, index) ;
-} ;
+    correct_ans.textContent = " " ;
+    if(currentEvent){
+        input.removeEventListener('keydown', currentEvent) ;
+    } ;
+    currentEvent = (event) => {handleEnterKey(event, roomName, index)};
+    input.addEventListener('keydown', currentEvent);
+})
 
-/** time counting function */
-const countdownAndReply = (roomName, index) => {
-    return new Promise((resolve) => {
-        countdown = 12;
-        /**consequence is important: 
-        1. firstly remove existed listener
-        2. defind new one
-        3. execute new one
-        if change the consequence, old one would never be deleted
-    */
-        if(currentEvent){
-            input.removeEventListener('keydown', currentEvent) ;
-        } ;
-        currentEvent = (event) => {handleEnterKey(event, roomName, index)};
-        input.addEventListener('keydown', currentEvent);
-
-        const countdownTimer = setInterval(() => {
-            countdown--;
-            if(answerNumber === 2){
-                countdown = 0 ;
-                answerNumber = 0 ;
-            }else if (countdown === 0) {
-                const inputValue = input.value ;
-                
-                input.disabled = true ;
-                time.textContent = time.textContent ;
-                if(!sendAns){
-                    console.log("send answer when time = 0") ;
-                    socket.emit("sendAnswer", {answer: inputValue, roomName : roomName, index:index, score:countdown*10}) ;
-                }
-            }else if(countdown <= -4){
-                countdown = 12 ;
-                clearInterval(countdownTimer);  
-                resolve() ;
-            }else if(countdown > 0){
-                time.textContent = countdown ;
-            }
-        }, 1000) ;
-    })
-} ;
-
-const goToEnd = () => {
-    socket.emit("deleteRecord", {roomName:roomName}) ;
-    myScorePlace.textContent = myScore.getAttribute("value") ;
-    yourScorePlace.textContent = yourScore.getAttribute("value") ;
-    gamePage.style.display = 'none' ;
-    endPage.style.display = 'flex' ;
-    const myfinal = parseInt(myScore.getAttribute("value"));
-    const yourfinal = parseInt(yourScore.getAttribute("value"));
-    if(myfinal >  yourfinal){
-        result.textContent = "Win" ;
-    }else if(myfinal ===  yourfinal){
-        result.textContent = "Draw" ;
-    }else{
-        result.textContent = "Lose" ;
+socket.on("endGame", ({question, index, answer})=> {
+    input.disabled = true ;
+    input.value = "" ;   
+    let c = false;
+    if(answer.split("；").includes(input)) c = true ; 
+    const dict = {
+        index:index,
+        question:question,
+        input:inputContainer,
+        answer:answer,
+        correctness: c
     }
-    myBar.style.height = "0" ;
-    yourBar.style.height = "0" ;
-    myScore.setAttribute("value", "0") ;
-    yourScore.setAttribute("value", "0") ;
-    myScore.textContent = myScore.getAttribute("value") ;
-    yourScore.textContent = yourScore.getAttribute("value") ;
-    correct_ans.textContent = "" ;
-}
+    record.push(dict) ;
+    inputContainer = " " ;
+})
 
-const handleEnterKey = (event, roomName, index) => {
-    if(event.keyCode === 13){
-        const inputValue = input.value ;
-        input.value = "" ;
-        input.disabled = true ;
-        socket.emit("sendAnswer", {answer: inputValue, roomName : roomName, index:index, score:countdown*10}) ;
-        sendAns = true ;
-        input.removeEventListener('keydown', currentEvent);
+socket.on("answerResult", ({socketId, result, answer, score}) => {
+    if(socketId==socket.id){// us
+        myinfo.textContent = "Correct !" ;
+        if(!result) {
+            correct_ans.textContent = answer ;
+            myinfo.textContent = "Wrong ! " ;
+         }
+        myScore.textContent = score.toString() ;
+        myBar.style.height = score.toString() + "%" ;
+        triggerFloat(myinfo) ;
+    }else{ //opponent
+        yourinfo.textContent = "Correct !" ;
+        if(!result) {
+            yourinfo.textContent = "Wrong ! " ;
+         }
+        yourScore.textContent = score.toString() ;
+        yourBar.style.height = score.toString() + "%" ;
+        triggerFloat(yourinfo) ;
     }
-} ;
+})
 
-
-const triggerFloat = (element) => {
-    element.classList.add('float-up');
-    element.addEventListener('animationend', () => {
-        element.classList.remove('float-up');
+socket.on('error', ()=>{
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Some Error Occur!',
     });
-} ;
+    resetGamePage() ;
+    back() ;
 
-socket.on('answerResponse', (data) => {
-    answerNumber += 1 ;
-    if(data.id === socket.id){ 
-        if(data.answer === true){
-            // console.log(`${data.id} wins point`) ;
-            const score = data.score ;
-            const initScore = parseInt(myScore.getAttribute("value")) ;
-            myScore.setAttribute("value", (initScore + score).toString()) ;
-            myScore.textContent = myScore.getAttribute("value") ;
-            const fullScore = 100*questionNumber*0.7 ;
-            const barProgress = ((myScore.getAttribute("value")/fullScore)*100).toString() ;
-            myBar.style.height = barProgress+"%" ;
-            myinfo.textContent = "Correct ! " ;
-            triggerFloat(myinfo) ;
+})
 
-        }else{
-            // console.log(`${data.id} losses point`) ;
-            myinfo.textContent = "Wrong" ;
-            triggerFloat(myinfo) ;
-            correct_ans.textContent = data.word ;
-        }
-    }else{
-        if(data.answer === true){
-            // console.log(`${data.id} wins point`) ;
-            const score = data.score ;
-            const initScore = parseInt(yourScore.getAttribute("value"), 10) ;
-            yourScore.setAttribute("value", (initScore + score).toString()) ;
-            yourScore.textContent = yourScore.getAttribute("value") ;
-            const fullScore = 100*questionNumber*0.7 ;
-            const barProgress = ((yourScore.getAttribute("value")/fullScore)*100).toString() ;
-            yourBar.style.height = barProgress+"%" ;
-            yourinfo.textContent = "Correct ! " ;
-            triggerFloat(yourinfo) ;
-        }else{
-            // console.log(`${data.id} losses point`) ;
-            yourinfo.textContent = "Wrong" ;
-            console.log("rival error") ;
-            triggerFloat(yourinfo) ;
-        }
-    }
-}) ;
 
-const backMain = () => {
-    window.location.href = 'main.html';
-} ;
+socket.on("final", ({scores}) => {
+    scores.forEach(info => {
+        if (info.socketId === socket.id) myScorePlace.textContent = info.score;
+        else yourScorePlace.textContent = info.score;
+    });
+    if(Number(myScorePlace.textContent)===Number(yourScorePlace.textContent)) result.textContent = "Drew!" ;
+    else if(Number(myScorePlace.textContent)>Number(yourScorePlace.textContent)) result.textContent = "Winner!" ;
+    else result.textContent = "Defeat! "
+    tbody.innerHTML = " " ;
+    record.forEach(item => {
+        const tr = document.createElement('tr') ;
+        tr.innerHTML = `
+            <th scope="row">${item.index}</th>
+            <td>${item.question}</td>
+            <td>${item.input}</td>
+            <td>${item.answer}</td>
+        `
+        tbody.appendChild(tr);
+    })
+    
+    gamePage.style.display = "none" ;
+    endPage.style.display = "block" ;
+})
+
+
+
+
+
 
 const backWaiting = () => {
     endPage.style.display = 'none' ;
-    waitingPage.style.display = 'flex' ;
+    waitingPage.style.display = 'block' ;
+    tbody.innerHTML = "" ;
+    record = [] ;
     socket.emit('match', {category: categorySelect.value, chapter: chapterSelect.value}) ;
+    resetTestPage() ;
 } ;
 
-const backStartMatch = () => {
-    endPage.style.display = 'none' ;
-    startMatchPage.style.display = 'flex' ;
-}
 
 const cancelMatch = () => {
     socket.emit("cancelMatch") ;
-}
-
-socket.on("cancelMatch", () => {
     waitingPage.style.display = "none" ;
-    startMatchPage.style.display = "flex" ;
-}) ;
+    startMatchPage.style.display = "block" ;
+}
 
 const updateCategory = async() => {
     chapterSelect.innerHTML = "" ;
@@ -259,27 +246,33 @@ socket.on('err', (err) => {
     console.log(err.err) ;
 }) ;
 
-const logout = () => {
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    window.location.href = "user.html"; 
-} ;
 
 const back = () => {
     if(startMatchPage.style.display == "none"){
-        startMatchPage.style.display = "flex" ;
+        startMatchPage.style.display = "block" ;
         waitingPage.style.display = "none" ;
         gamePage.style.display = "none" ;
         endPage.style.display = "none" ;
+        tbody.innerHTML = " " ;
+        record = [] ;
+        connect = false ;
+        yourinfo.classList.remove('float-up');
+        myinfo.classList.remove('float-up') ;
+        cancelMatch() ;
+        socket.disconnect();
     }else{
         window.location.href = "main.html"; 
     }
 } ;
 
-const home = () => {
-    window.location.href = "main.html"; 
-}
+updateCategory() ;
 
-
-
+const triggerFloat = (element) => {
+    
+    element.classList.add('float-up');
+    element.addEventListener('animationend', () => {
+        element.classList.remove('float-up');
+    });
+} ;
 
 

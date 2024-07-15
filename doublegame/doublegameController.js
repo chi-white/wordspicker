@@ -1,6 +1,5 @@
 const doubleGameModel = require('./doublegameModel') ;
-
-const questionNumber = 2 ;
+const { v4: uuidv4 } = require('uuid');
 
 const getRandomElement = (questionNumber) => {
   const array = [] ;
@@ -15,117 +14,217 @@ const getRandomElement = (questionNumber) => {
 
 const findPair = (waitingUsers, data, id) => {
   for(let key in waitingUsers){
-    console.log( waitingUsers[key], data.chapter, waitingUsers) ;
-    if(key !== id && waitingUsers[key].category === data.category && waitingUsers[key].chapter === data.chapter)
+    if(key !== id &&
+       waitingUsers[key].category === data.category && 
+       waitingUsers[key].chapter === data.chapter)
       return key ;
   }
+  
   return null ;
 } 
 
+const waitingUsers = {} ;
+const roomQuestion = {} ;
+const roomAnswer = {} ;
+const roomAbbrev = {} ;
+const roomQuestionType = {} ;
+const rooms = {} ;
+const doubleAnscheck = {} ;
 
 const handleDoublegameSocket = (io) => {
-    const waitingUsers = {} ;
-    const roomWords = {} ;
-    const roomQuestionType = {} ;
-    io.on('connection', (socket) => {
+    const dgio = io.of('/doublegame');
+    dgio.on('connection', (socket) => {
       console.log('doublegame connection');
 
       socket.on('match', async (data) => {
-        console.log(`${socket.id}, server receive match request`);
         waitingUsers[socket.id] = {category:data.category, chapter: data.chapter} ;
-        console.log("curr", socket.id, data.category, data.chapter) ;
         const pairId = findPair(waitingUsers, data, socket.id) ;
           try{
-            if(pairId !== null){
+            if(pairId){
               delete waitingUsers[pairId] ;
               delete waitingUsers[socket.id] ;
-              const roomName =  '${socket.id}${pairId}' ;
-              roomQuestionType[roomName] = getRandomElement(questionNumber) ;
-              roomWords[roomName] = await doubleGameModel.getWords(data.category, data.chapter, questionNumber) ;
-              io.to(pairId).emit('joinRoom', {roomName : roomName}) ;
-              io.to(socket.id).emit('joinRoom', {roomName : roomName}) ;
+              const roomName =  uuidv4() ;
+              
+              let q = [] ;
+              let a = [] ;
+              let abbrev = [] ;
+              const words = await doubleGameModel.getWords(
+                data.category, 
+                data.chapter, 
+                9999
+              ) ;
+              roomQuestionType[roomName] = getRandomElement(words.length) ;
+              for(let index=0; index<words.length; index++){
+                if(roomQuestionType[roomName][index] == "EtoC") {
+                  q.push(words[index].english) ;
+                  a.push(words[index].chinese) ;
+                }else{
+                  a.push(words[index].english) ;
+                  q.push(words[index].chinese) ;
+                }
+                abbrev.push(words[index].abbreviation) ;
+              }
+              roomQuestion[roomName] = q ;
+              roomAnswer[roomName] = a ;
+              roomAbbrev[roomName] = abbrev ;
+              rooms[roomName] = {players:{}, timer: null, people:0} ;
+              doubleAnscheck[roomName] = 0 ;
+              dgio.to(pairId).emit('inviteRoom', {roomName : roomName}) ;
+              dgio.to(socket.id).emit('inviteRoom', {roomName : roomName}) ;
             }
           }catch(err){
-            io.to(pairId).emit("err", {err: err}) ;
-            io.to(socket.id).emit("err", {err: err}) ;
-            console.log(err) ;
+            dgio.to(pairId).emit("err", {err: err}) ;
+            dgio.to(socket.id).emit("err", {err: err}) ;
           }
       });
+
+      socket.on("joinRoom", async ({roomName}) => { //data => socketId:socket.id, roomName:roomName, 
+          rooms[roomName].players[socket.id.toString()] = {
+          socketId: socket.id, 
+          score: 0
+          } ;
+          socket.join(roomName) ;
+          dgio.to(socket.id).emit("successfully join",{roomName:roomName}) ;
+          console.log("from Join room", rooms[roomName].players) ;
+      }) ; //這邊會太快導致後面ready獨到undefined，只有console.log才能解決
+
+      socket.on("ready",({roomName}) => {  //data => roomName:roomName
+        rooms[roomName].people += 1 ;
+
+        if( rooms[roomName].people===2){
+          startIteration(dgio, roomName) ;
+        }
+      }) ;
+
+      socket.on("submitAnswer", ({input,roomName, index, time}) => { //input:input, docketId :socketId, roomId:roomId, index : index
+          try{
+            const room = rooms[roomName] ;
+            doubleAnscheck[roomName]++ ;
+            const ans = roomAnswer[roomName][index].split('；') ;
+            let result ;
+          if(ans.includes(input.toLowerCase())){ 
+            result = true ;
+            room.players[socket.id].score += (10/roomQuestion[roomName].length)*time ;
+          }
+          else result = false ;
+          dgio.to(roomName).emit("answerResult", {
+            socketId:socket.id,
+            result:result, 
+            answer:roomAnswer[roomName][index], 
+            score:room.players[socket.id].score
+          }) ;
+          checkBothAnswered(dgio, roomName, index, input, roomQuestion[roomName][index]) ;
+          }catch(error){
+            dgio.to(socket.id).emit("error") ;
+          }
+      })
+
 
 
       socket.on("cancelMatch", () => {
         console.log(`${socket.id} cancels match`) ;
         try{
           delete waitingUsers[socket.id] ;
-          io.to(socket.id).emit("cancelMatch") ;
         }catch(err){
           console.log(`${socket.id} cancel fail`) ;
+          dgio.to(socket.id).emit("error") ;
         }
       })
-  
-      socket.on('joinRoom', (data) => {
-        const roomName = data.roomName ;
-        socket.join(roomName);
-        io.to(socket.id).emit("matchSucessfully", {roomName : roomName}) ;
-      });
-
-      socket.on('disconnect', () => {
-        console.log('doublegame disconnection');
-        delete waitingUsers[socket.id] ;
-      });
-  
-      socket.on('getWords', async (data) => {
-        const roomName = data.roomName ;
-        const index = data.index ;
-        if(roomQuestionType[roomName][index] === "EtoC"){
-          io.to(socket.id).emit('getWords', {word:roomWords[roomName][index].english, 
-            abbreviation:roomWords[roomName][index].abbreviation , 
-            roomName: roomName, 
-            index:index
-          }) ;
-        }else{
-          const question = roomWords[roomName][index].chinese.split('；');
-          const randomIndex = Math.floor(Math.random() * (question.length));
-          io.to(socket.id).emit('getWords', {word:question[randomIndex], 
-            abbreviation:roomWords[roomName][index].abbreviation, 
-            roomName: roomName, 
-            index:index
-          }) ;
-        }
-      }) ;
-
-      socket.on('sendAnswer', async (data) => {
-        const roomName = data.roomName ;
-        const index = data.index ;
-        const score = data.score ;
-        if(roomQuestionType[roomName][index] === "EtoC"){
-          const answer = roomWords[roomName][index].chinese.split('；');
-          if (answer.includes(data.answere.toLowerCase())){         
-            io.to(data.roomName).emit('answerResponse', {answer:true, id: socket.id, score:score}) ;
-          }else{
-            io.to(data.roomName).emit('answerResponse', {answer:false, id: socket.id, word:roomWords[roomName][index].chinese}) ;
-          }
-        }else{
-          if ( data.answer === roomWords[roomName][index].english){         
-            io.to(data.roomName).emit('answerResponse', {answer:true, id: socket.id, score:score}) ;
-          }else{
-            io.to(data.roomName).emit('answerResponse', {answer:false, id: socket.id, word:roomWords[roomName][index].english}) ;
-          }
-        }
-          
-      }) ;
-
-      socket.on("deleteRecord", (data) => {
-        const roomName = data.roomName ;
-        if(roomName in roomWords){
-          delete roomWords[roomName] ;
-        }
-        if(roomName in roomQuestionType){
-          delete roomQuestionType[roomName] ;
-        }
-      }) ;
     });
   } ;
+
+
+
+
+const startIteration = async (dgio, roomName) => {
+  for(let i=0; i<roomQuestion[roomName].length; i++ ) {
+    await startGame(dgio, roomName, i) ;
+    await new Promise((resolve)=>{setTimeout(()=>{resolve()}, 3000)}) ;
+  }
+  endIteration(dgio, roomName) ;
+}
+
+const startGame = (dgio, roomName, index) => {
+  doubleAnscheck[roomName] = 0 ;
+  return new Promise((resolve, reject) => {
+    try {
+      const room = rooms[roomName];
+
+      if (!roomQuestion[roomName] || !roomQuestion[roomName][index]) {
+        throw new Error(`roomQuestion[${roomName}][${index}] is undefined`);
+      }
+
+      room.timer = setTimeout(() => {
+        endGame(
+          dgio,
+          roomName,
+          index,
+        );
+        resolve(); 
+      }, 13000);
+
+      let remainTime = 11;
+
+      const interval = setInterval(() => {
+        remainTime--;
+        if (remainTime >= 0) {
+          dgio.to(roomName).emit("timer", { timing: remainTime });
+        }
+        if (remainTime < -2||doubleAnscheck[roomName]===2) {
+          clearInterval(interval);
+          resolve() ;
+        }
+
+      }, 1000);
+
+      dgio.to(roomName).emit('startGame', {
+        word: roomQuestion[roomName][index],
+        abbreviation: roomAbbrev[roomName][index],
+        index: index,
+        roomName: roomName
+      });
+
+    } catch (error) {
+      dgio.to(roomName).emit("error");
+      reject(error); 
+    }
+  });
+}
+
+
+const checkBothAnswered = (dgio, roomName, index, input, question) => {
+  if(doubleAnscheck[roomName] && doubleAnscheck[roomName]==2){
+    const room = rooms[roomName] ;
+    clearTimeout(room.timer) ;
+    endGame(dgio, roomName, index) ;
+  }
+}
+
+const endGame = (dgio, roomName, index) => {
+  try{
+    dgio.to(roomName).emit("endGame", {
+      question:roomQuestion[roomName][index],
+      index:index,
+      answer:roomAnswer[roomName][index] 
+    }) 
+  }catch(err){
+    console.log(err, "老問題 from endgame") ;
+    dgio.to(roomName).emit("error");
+  }
+}
+
+const endIteration = (dgio, roomName) => {
+  const room = rooms[roomName] ;
+  const scores = Object.entries(room.players).map(([socketId, data])=>{return {socketId:socketId, score:data.score}}) ;
+  dgio.to(roomName).emit("final", {scores: scores}) ;
+  if(roomName in roomQuestion) delete roomQuestion[roomName] ;
+  if(roomName in roomAnswer) delete roomAnswer[roomName] ;
+  if(roomName in roomAbbrev) delete roomAbbrev[roomName] ;
+  if(roomName in rooms) delete rooms[roomName] ;
+  if(roomName in roomQuestionType) delete roomQuestionType[roomName] ;
+  if(roomName in doubleAnscheck) delete doubleAnscheck[roomName] ; 
+}
+
 
 const getChapter = async(req, res) => {
   try {

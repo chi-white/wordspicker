@@ -13,12 +13,21 @@ const getDiagramData = async (req, res) => {
         const decode = jwt.verify(token, secretKey);
         const userId = decode.id ; 
         const result = await mainModel.getDiagramData(userId, category, chapter) ;
-        console.log("con", result) ;
         return res.status(200).json({data:result})
     }catch(err){
-        console.log(err) ;
         return res.status(500).json({err:err}) ;
     }
 } ;
 
-module.exports = {getDiagramData} ;
+const getUserInfo = async(req, res) => {
+    try{
+        const parseCookie = cookie.parse(req.headers.cookie) ;
+        const token = parseCookie.token ;
+        const decode = jwt.verify(token, secretKey);
+        return res.status(200).json({data:decode}) ;
+    }catch(err){
+        return res.status(500).json({err:err}) ;
+    }
+}
+
+module.exports = {getDiagramData, getUserInfo} ;

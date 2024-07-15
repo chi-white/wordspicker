@@ -6,7 +6,6 @@ const getDiagramData = (userId, category, chapter) => {
         const query = `SELECT * FROM TestResult WHERE userid = ? AND category = ? AND chapter = ? ;` ;
         db.query(query, [userId, category, chapter], (err, result) => {
             if(err){
-                console.log("fail!!!!!") ;
                 reject(err) ;
             }else{
                 resolve(result) ;   

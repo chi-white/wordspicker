@@ -11,7 +11,6 @@ const getWords = async (req, res) => {
         const result = await practiceModeModel.getWords(category, chapter) ;
         return res.status(200).json({data:result}) ;
     }catch(err){
-        console.log("getWords fail") ;
         return res.status(500).json({err:err})
     }
 } ;
@@ -24,10 +23,8 @@ const addFavorite = async(req, res) => {
         const decode = jwt.verify(token, secretKey);
         const userId = decode.id ; 
         const result = await practiceModeModel.addFavorite(userId, wordId) ;
-        console.log('add', wordId) ;
         return res.status(200).json({data:result}) ;
     }catch(err){
-        console.log("add Favorite fail", err) ;
         return res.status(500).json({err:err}) ;
     }
 } ;
@@ -42,7 +39,6 @@ const queryFavorite = async(req, res) => {
         const result = await practiceModeModel.queryFavorite(userId, wordId) ;
         return res.status(200).json({data:result}) ;
     }catch(err){
-        console.log("query Favorite fail", err) ;
         return res.status(500).json({err:err}) ;
     }
 }
@@ -54,12 +50,9 @@ const deleteFavorite = async(req, res) => {
         const token = parseCookie.token ;
         const decode = jwt.verify(token, secretKey);
         const userId = decode.id ; 
-        console.log("controller log", userId, wordId) ;
         const result = await practiceModeModel.deleteFavorite(userId, wordId) ;
-        console.log('delete', wordId) ;
         return res.status(200).json({data:"OK"}) ;
     }catch(err){
-        console.log("delete Favorite fail", err) ;
         return res.status(500).json({err:err}) ;
     }
 }
@@ -72,7 +65,6 @@ const getFavoriteWords = async (req, res) => {
         const result = await practiceModeModel.getFavoriteWords(decode.id) ;
         return res.status(200).json({data:result}) ;
     }catch(err){
-        console.log("getFavoriteWords fail") ;
         return res.status(500).json({err:err})
     }
 } ;

@@ -1,22 +1,19 @@
-const {host} = require('../../host') ;
-const toggleForm = (formId) => {
-    const loginForm = document.getElementById('loginForm');
-    const signupForm = document.getElementById('signupForm');
-    const loginBtn = document.getElementById('loginBtn');
-    const signupBtn = document.getElementById('signupBtn');
+// const {host} = require('../../host.js') ;
+const host = 'https://kimery.store' ;
 
-    if (formId === 'loginForm') {
-        loginForm.style.display = 'block';
-        signupForm.style.display = 'none';
-        loginBtn.style.backgroundColor = '#3498db';
-        signupBtn.style.backgroundColor = '#ddd';
-    } else {
-        loginForm.style.display = 'none';
-        signupForm.style.display = 'block';
-        loginBtn.style.backgroundColor = '#ddd';
-        signupBtn.style.backgroundColor = '#3498db';
-    }
+const welcomePage = document.getElementById('welcomePage');
+const loginForm = document.getElementById('loginForm');
+const signupForm = document.getElementById('signupForm');
+
+const t = new URLSearchParams(window.location.search).get('token');
+if(t){
+    Swal.fire({
+        icon: 'error',
+        title: 'Without legal token',
+        text:  "Register or Login First",
+    });
 }
+
 
 
 const signup = async () => {
@@ -32,7 +29,7 @@ const signup = async () => {
             'provider': 'native'
         };
 
-        const url = "${host}/user/signup";
+        const url = `${host}/user/signup`;
         const response = await fetch(url, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -49,12 +46,15 @@ const signup = async () => {
             });
         } else {
             console.log('Success:', responseData);
-        
-            Swal.fire({
+            
+            await Swal.fire({
                 icon: 'success',
                 title: 'Congratulation',
                 text: "Successfully signed up",
             });
+            window.location.href = 'user.html' ;
+
+            
         }
     } catch (error) {
         console.error('Error:', error);
@@ -68,17 +68,18 @@ const signup = async () => {
 
 
 const login = async () => {
+
     try {
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
-
+        
         const data = {
             'provider': 'native',
             'email': email,
             'password': password
         };
 
-        const loginurl = '${host}/user/login';
+        const loginurl = `${host}/user/login`;
         const response = await fetch(loginurl, {
             method: 'POST',
             headers: {
@@ -109,13 +110,25 @@ const login = async () => {
     }
 }
 
-const switchElement = document.getElementById("mySwitch");
-const switchCheckbox = document.getElementById("switchCheckbox");
+const oauth2 = () => {
+    window.location.href = '/auth/google';
+}
 
-switchElement.addEventListener("click", () => {
-    if (switchCheckbox.checked) {
-        toggleForm('loginForm');
-    } else {
-        toggleForm('signupForm');
-    }
-});
+const goToSigup = () => {
+    welcomePage.style.display = 'none' ;
+    loginForm.style.display = 'none' ;
+    signupForm.style.display = 'block' ;
+}
+
+const goToLogin = () => {
+    welcomePage.style.display = 'none' ;
+    signupForm.style.display = 'none' ;
+    loginForm.style.display = 'block' ;
+}
+
+const goToWelcome = () => {
+    loginForm.style.display = 'none' ;
+    signupForm.style.display = 'none' ;
+    welcomePage.style.display = 'block' ;
+}
+

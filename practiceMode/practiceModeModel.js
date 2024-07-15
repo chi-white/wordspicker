@@ -7,7 +7,7 @@ const getWords = (category, chapter) => {
         SELECT Word.*
         FROM Word
         JOIN Category ON Word.category = Category.id 
-        WHERE Category.category = ? and Word.chapter = ? ;
+        WHERE Category.category = ? AND Word.chapter = ? ;
         ` ;
         db.query(queryWords, [category, chapter], (err, result) => {
             if (err) {
@@ -41,7 +41,7 @@ const getFavoriteWords = (userId) => {
 
 const addFavorite = (userId, wordId) =>{
     return new Promise((resolve, reject) => {
-        const insertFavorite = `INSERT INTO Favorite (userid, wordid) values (?,?) ;` ;
+        const insertFavorite = `INSERT IGNORE INTO Favorite (userid, wordid) VALUES (?,?) ;` ;
         db.query(insertFavorite, [userId, wordId], (err, result) => {
             if(err){
                 console.log("add Favorite fail", err) ;
@@ -55,7 +55,7 @@ const addFavorite = (userId, wordId) =>{
 
 const queryFavorite = (userId, wordId) => {
     return new Promise((resolve, reject) => {
-        const queryFavorite = `SELECT* FROM Favorite WHERE userId = ? and wordId = ? ;` ;
+        const queryFavorite = `SELECT* FROM Favorite WHERE userId = ? AND wordId = ? ;` ;
         db.query(queryFavorite, [userId, wordId], (err, result) => {
             if(err){
                 console.log("query Favorite fail", err) ;
@@ -69,7 +69,7 @@ const queryFavorite = (userId, wordId) => {
 
 const deleteFavorite = (userId, wordId) => {
     return new Promise((resolve, reject) => {
-        const queryFavorite = `DELETE FROM Favorite WHERE userId = ? and wordId = ? ;` ;
+        const queryFavorite = `DELETE FROM Favorite WHERE userId = ? AND wordId = ? ;` ;
         db.query(queryFavorite, [userId, wordId], (err, result) => {
             if(err){
                 console.log("query Favorite fail", err) ;

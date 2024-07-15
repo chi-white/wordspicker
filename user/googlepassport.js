@@ -2,6 +2,7 @@ const passport = require('passport');
 require('dotenv').config();
 
 var userProfile ;
+const host = 'https://kimery.store' ;
 
 passport.serializeUser(function(user, cb) {
   cb(null, user);
@@ -19,7 +20,7 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost/auth/google/callback"
+    callbackURL: `${host}+/auth/google/callback`
   },
   function(accessToken, refreshToken, profile, done) {
       userProfile=profile;

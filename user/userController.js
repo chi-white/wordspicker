@@ -53,7 +53,7 @@ const signinUser = async (req, res) => {
         const inputcheck = await signininputcheck(req.body) ;
         const result = await userModel.signinUser(req.body) ;
         if(result === "wrong password or email"){
-            console.log(result) ;
+
             return res.status(403).json({"err" : result}) ;
         }else{
             res.cookie('token', result.access_token) ; 
@@ -92,6 +92,8 @@ const googleInsertUser = async (req, res, next) =>{
 
 const googlelogin = async (req, res) => {
   try{
+
+    
     const secretkey = process.env.JWT_SECRETKEY ;
     const expired_t = 3600;
     const userProfile = req.user ;

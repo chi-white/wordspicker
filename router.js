@@ -52,8 +52,10 @@ app.get('/success', googleInsertUser, googlelogin);
 app.get('/main.html', checkJwtToken, checkAuth("main_html")) ;
 app.use(express.static('main/mainView')) ;
 
-const {getDiagramData} = require('./main/mainController');
-app.get('/diagram', getDiagramData) ;
+const {getDiagramData, getUserInfo} = require('./main/mainController');
+// app.get('/diagram', getDiagramData) ;
+
+app.get('/getUserInfo', checkJwtToken, checkAuth("main_html"), getUserInfo) ;
 
 /**-------------doublegame----------- */
 app.get('/doublegame.html', checkJwtToken, checkAuth("doublegame_html")) ;

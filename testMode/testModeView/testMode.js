@@ -1,5 +1,6 @@
-const {host} = require('../../host') ;
-const socket = io(host);
+// const {host} = require('../../host') ;
+const host = 'https://kimery.store' ;
+let socket = io(host+"/testmode");
 let currentEvent ;
 let answerNumber = 0;
 const categorySelect = document.getElementById("category");
@@ -15,11 +16,28 @@ const time = document.getElementById("time") ;
 const correct = document.getElementById("correct") ;
 const revise = document.getElementById("revise") ;
 const finalScoreShow = document.getElementById("finalScore") ;
-var finalScore = 0 ;
+const tbody = document.getElementById('t');
 const questionType = [] ;
 var questionNumber = 2 ;
 var sendAns = false ;
 var initQuestionNumber = questionNumber;
+var connect = false ;
+let record = [] ;
+let index = 0 ;
+let inputContainer = "";
+let ROOMNAME ;
+
+const handleEnterKey = (event, roomName) => {
+    if(event.keyCode === 13){
+        const inputValue = input.value ;
+        inputContainer = inputValue ;
+        input.value = "" ;
+        input.disabled = true ;
+        const t = Number(time.textContent) ;
+        socket.emit("submitAnswer", {input: inputValue, roomName : roomName}) ;
+        input.removeEventListener('keydown', currentEvent);
+    }
+} ;
 
 const updateCategory = async() => {
     chapterSelect.innerHTML = "" ;
@@ -43,23 +61,25 @@ const updateCategory = async() => {
     }
 }
 
-
 const getCookie = async () => {
     const allCookies = document.cookie;
-    console.log(allCookies, "from get coookie") ;
     const cookiesArray = allCookies.split(';');
-    console.log(cookiesArray, "from get coookie") 
     for (let i of cookiesArray){
         const [name, token] = i.split("=") ;
-        console.log("name", name) ;
-        console.log("token", token) ;
-        console.log("token", name.trim(), name.trim()=="token") ;
         if(name.trim() == "token"){
             return token ;
         }
     }
     return null ;
 } ;
+
+const resetTestPage = () => {
+
+    revise.textContent = "" ;
+    time.textContent = " " ;
+    wordPlace.textContent = "" ;
+}
+
 
 const questionRequest = async () => {
     if (categorySelect.value === "" || chapterSelect.value === ""){
@@ -70,188 +90,168 @@ const questionRequest = async () => {
         });
     }else{
         const cook = await getCookie() ;
-        if(cook == null){
+        if(cook){
+            socket.connect() ;
+            connect = true ;
+
+            socket.emit("match", {
+                category : categorySelect.value,
+                chapter : chapterSelect.value,
+                type : questionTypeSelect.value,
+                mode : modeSelect.value,
+                token:cook
+            }) ;
+        }else{
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'NO token!',
+                text: 'NO token! Please register or log in!',
             });
-        }else{
-            console.log(cook) ;
-            socket.emit("setTestWords", {
-            category : categorySelect.value,
-            chapter : chapterSelect.value,
-            questionNumber : questionNumber,
-            questionType : questionTypeSelect.value,
-            mode : modeSelect.value,
-            token:cook}) ;
         }
     } ;
 }
 
-
-
-
-socket.on("setSucessfully", (data) => {
-    questionNumber = data.questionNumber ;
-    selectPage.style.display = "none" ;
-    testPage.style.display = "flex" ;
-    wordsIteration() ;
+socket.on("inviteRoom", ({roomName})=>{
+    ROOMNAME = roomName ;
+    socket.emit("joinRoom", {roomName:roomName}) ;
 }) ;
 
-const wordsIteration = async() => {
-    for(let index=0; index<questionNumber; index++){
-        await new Promise((resolve, reject) => {
-            socket.emit("getTestWords", {index : index}) ;
-            socket.once("getTestWords", async(data) => {
-                correct.textContent = "" ;
-                revise.textContent = "" ;
-                sendAns = false ;
-                await getWordsHandle(data) ;
-                input.value = "" ;
-                resolve() ;
-            })
-        }) ;
-    }
-    goToEnd() ;
-} ;
+socket.on("successfully join", ({roomName})=> {
+    selectPage.style.display = "none" ;
+    testPage.style.display = "block" ;
+    socket.emit("ready", {roomName:roomName}) ;
+})
 
-
-const getWordsHandle = async (data) => {
-    const index = data.index ;
-    wordPlace.textContent  = data.word+` (${data.abbreviation}.)` ;
+socket.on("startGame", ({word, abbreviation, roomName}) => {
     input.disabled = false ;
+    wordPlace.textContent  = word+` (${abbreviation}.)`;
     input.focus();
-    await countdownAndReply(index, data.wordid) ;
-} ;
+    revise.textContent = " " ;
+    if(currentEvent){
+        input.removeEventListener('keydown', currentEvent) ;
+    } ;
+    currentEvent = (event) => {handleEnterKey(event, roomName)};
+    input.addEventListener('keydown', currentEvent);
+})
 
-const countdownAndReply = (index, wordid) => {
-    return new Promise((resolve) => {
-        countdown = 10;
-        if(currentEvent){
-            input.removeEventListener('keydown', currentEvent) ;
-        } ;
-        currentEvent = (event) => {handleEnterKey(event, index, wordid)};
-        input.addEventListener('keydown', currentEvent);
-
-        const countdownTimer = setInterval(() => {
-            countdown--;
-            if(answerNumber === 1){
-                countdown = 0 ;
-                answerNumber = 0 ;
-            }else if (countdown === 0) {
-                input.disabled = true ;
-                time.textContent = time.textContent ;
-                if(!sendAns){
-                    socket.emit("sendTestAnswer", {answer: input.value, index:index, wordid:wordid, token:cook}) ;
-                }
-            }else if(countdown <= -2){
-                countdown = 10 ;
-                clearInterval(countdownTimer);  
-                resolve() ;
-            }else if(countdown > 0){
-                time.textContent = countdown ;
-            }
-        }, 1000) ;
-    })
-} ;
-
-/** time enter to send message function */
-const handleEnterKey = async (event, index, wordid) => {
-    if(event.keyCode === 13){
+socket.on("timer", ({timing, roomName})=>{
+    if(timing>=0) time.textContent = timing ;
+    if(timing===-1) input.disabled = true ;
+    if(timing===-2) {
         const inputValue = input.value ;
+        inputContainer = inputValue ;
         input.value = "" ;
-        input.disabled = true ;
-        const cook = await getCookie() ;
-        console.log(cook, "cook") ;
-        socket.emit("sendTestAnswer", {answer: inputValue, index:index, token:cook, wordid:wordid}) ;
-        sendAns = true ;
-        input.removeEventListener('keydown', currentEvent);
+        const t = Number(time.textContent) ;
+        socket.emit("submitAnswer", {input: inputValue, roomName : roomName}) ;
     }
-} ;
+})
 
-socket.on("testAnswerResponse", (data) => {
-    answerNumber++ ;
-    if(data.answer === false){
-        questionNumber++ ;
-        revise.textContent = data.word ;
-        document.body.classList.add('condition-met');
-        document.body.addEventListener('animationend', () => {
-            document.body.classList.remove('condition-met');
-        }) ;
+socket.on("endGame", ({question, answer})=> {
+    input.disabled = true ;
+    input.value = "" ;   
+    let c = false;
+    index++ ;
+    if(answer.split("；").includes(input)) c = true ; 
+    const dict = {
+        index:index,
+        question:question,
+        input:inputContainer,
+        answer:answer,
+        correctness: c
+    }
+    record.push(dict) ;
+    inputContainer = " " ;
+})
+
+
+socket.on("answerResult", ({result, answer, score}) => {
+
+    if(!result) {
+        revise.textContent = answer ;
     }else{
-        console.log(data.index) ;
-        if(data.index<initQuestionNumber){
-            finalScore += 100/initQuestionNumber ;
-            console.log(finalScore) ;
-        }else if(data.index<initQuestionNumber*2){
-            finalScore += 50/initQuestionNumber ;
-        }else{
-            finalScore += 10/initQuestionNumber ; 
-        }
-        correct.textContent = data.word ;
         triggerFloat(correct) ;
     }
-}) ;
+})
+
+socket.on('error', ()=>{
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Some Error Occur!',
+    });
+    resetTestPage() ;
+    back() ;
+
+})
 
 
-
-
-const goToEnd = async () => {
-    cook = await getCookie() ;
-    const score = Math.floor(finalScore) ;
-    socket.emit("deleteTestRecord", {token:cook,category:categorySelect.value, chapter:chapterSelect.value, score:score}) ;
-    questionNumber = initQuestionNumber ;
+socket.on("final", ({score}) => {
+    finalScoreShow.textContent = Math.round(score) ;
+    tbody.innerHTML = " " ;
+    record.forEach(item => {
+        const tr = document.createElement('tr') ;
+        tr.innerHTML = `
+            <th scope="row">${item.index}</th>
+            <td>${item.question}</td>
+            <td>${item.input}</td>
+            <td>${item.answer}</td>
+        `
+        tbody.appendChild(tr);
+    })
+    
     testPage.style.display = "none" ;
-    endPage.style.display = "flex" ;
-    finalScoreShow.textContent = (Math.floor(finalScore)).toString() ;
-    finalScore = 0 ;
-}
+    endPage.style.display = "block" ;
+})
 
-const backMain = () => {
-    window.location.href = 'main.html';
-} ;
-
-const backSelect = () => {
-    endPage.style.display = 'none' ;
-    selectPage.style.display = 'flex' ;
-} ;
 
 const backTest = async() => {
     endPage.style.display = 'none' ;
-    testPage.style.display = 'flex' ;
-    correct.textContent = "" ;
-    time.textContent = "" ;
-    wordPlace.textContent = "" ;
+    testPage.style.display = 'block' ;
+    resetTestPage() ;
+    tbody.innerHTML = "" ;
+    record = [] ;
+    correct.classList.remove("float-up") ;
+    index = 0 ;
     const cook = await getCookie() ;
-    socket.emit("setTestWords", {
-        category : categorySelect.value,
-        chapter : chapterSelect.value,
-        questionNumber : questionNumber,
-        questionType : questionTypeSelect.value,
-        token:cook}) ;
+    if(cook){
+        socket.connect() ;
+        connect = true ;
+
+        socket.emit("match", {
+            category : categorySelect.value,
+            chapter : chapterSelect.value,
+            type : questionTypeSelect.value,
+            mode : modeSelect.value,
+            token:cook
+        }) ;
+    }else{
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'NO token! Please register or log in!',
+        });
+    }
+    
 }  ;
+
+const deleteSign = () => {
+    socket.emit("discon", {roomName:ROOMNAME}) ;
+}
 
 const back = () => {
     if(selectPage.style.display == "none"){
-        selectPage.style.display = "flex" ;
+        selectPage.style.display = "block" ;
         testPage.style.display = "none" ;
         endPage.style.display = "none" ;
-        console.log(selectPage.style.display) ;
+        tbody.innerHTML = " " ;
+        index = 0 ;
+        correct.classList.remove("float-up") ;
+        record = [] ;
+        deleteSign() ;
     }else{
         window.location.href = "main.html";
     }
 }
-
-const home = () => {
-    window.location.href = "main.html"; 
-}
-
-const logout = () => {
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    window.location.href = "user.html"; 
-} ;
-
 
 const triggerFloat = (element) => {
     element.classList.add('float-up');
@@ -259,3 +259,5 @@ const triggerFloat = (element) => {
         element.classList.remove('float-up');
     });
 } ;
+
+updateCategory() ;

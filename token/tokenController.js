@@ -19,12 +19,13 @@ const checkJwtToken = async (req, res, next) => {
             req.role = decode.role ;
             next() ;  
         }else{
-            return res.status(401).json({err : 'Unauthorized'}) ;
+            // return res.status(401).json({err : 'Unauthorized'}) ;
+            return res.redirect('/user.html?token=false');
         }
         
     }catch(error){
         if (error.message === "jwt must be provided"){
-            return res.status(400).json({err: "Unauthorized"}) ;
+            return res.redirect('/user.html?token=false');
         }
         return res.status(500).json({err : 'Internal server error'}) ;
     }
