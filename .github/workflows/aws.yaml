@@ -24,24 +24,24 @@ jobs:
          docker push ${{ secrets.DOCKER_USERNAME }}/wordpicker-backend:latest
 
          
-  Deploy-on-EC2:
-    runs-on: ubuntu-latest
-    needs: Build-and-push
+  # Deploy-on-EC2:
+  #   runs-on: ubuntu-latest
+  #   needs: Build-and-push
 
-    steps: 
-      - name: Checkout repository
-        uses: actions/checkout@v3
+  #   steps: 
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+  #     - name: Set up SSH
+  #       uses: webfactory/ssh-agent@v0.7.0
+  #       with:
+  #         ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-      - name: Deploy to EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST  }} << EOF
-          cd wordsPickerTest/wordspicker
-          docker-compose down
-          docker pull king0209/wordpicker-backend:latest
-          docker-compose up -d
-          EOF
+  #     - name: Deploy to EC2
+  #       run: |
+  #         ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST  }} << EOF
+  #         cd wordsPickerTest/wordspicker
+  #         docker-compose down
+  #         docker pull king0209/wordpicker-backend:latest
+  #         docker-compose up -d
+  #         EOF
