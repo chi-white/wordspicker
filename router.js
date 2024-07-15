@@ -29,24 +29,24 @@ app.use(express.static('user/userView')) ;
 const {googlelogin, googleInsertUser} = userController ;
 const session = require('express-session');
 const passport = require('./user/googlepassport'); // google third part login passport
-app.use(session({
-    resave: false,
-    saveUninitialized: true,
-    secret: 'SECRET' 
-  }));
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(session({
+//     resave: false,
+//     saveUninitialized: true,
+//     secret: 'SECRET' 
+//   }));
+// app.use(passport.initialize());
+// app.use(passport.session());
 
-app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+// app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
 
-app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/error' }),(req, res) => {
-    res.redirect('/success');
-});
+// app.get('/auth/google/callback', 
+//   passport.authenticate('google', { failureRedirect: '/error' }),(req, res) => {
+//     res.redirect('/success');
+// });
 
-app.get('/success', googleInsertUser, googlelogin);
+// app.get('/success', googleInsertUser, googlelogin);
   
-  app.get('/error', (req, res) => res.send("error logging in"));
+//   app.get('/error', (req, res) => res.send("error logging in"));
 
 /**----------- main page------------ */
 app.get('/main.html', checkJwtToken, checkAuth("main_html")) ;
