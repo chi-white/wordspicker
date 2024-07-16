@@ -83,9 +83,11 @@ app.get('/testMode.html', checkJwtToken, checkAuth("testmode_html")) ;
 app.use(express.static('testMode/testModeView')) ;
 handleTestModeSocket(io) ;
 
+//**------------manager mode------- */
+
+// app.get('/addWords', checkJwtToken, checkAuth("addWords"), ) ;
 
 /**------------server-------------- */
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    //y
 });
