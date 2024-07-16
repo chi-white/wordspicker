@@ -43,4 +43,5 @@ jobs:
           cd wordsPickerTest/wordspicker
           docker-compose down
           docker pull king0209/wordpicker-backend:latest
+          git pull
           EOF

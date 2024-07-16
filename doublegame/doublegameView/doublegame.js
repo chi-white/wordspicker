@@ -107,8 +107,24 @@ socket.on("inviteRoom", ({roomName})=>{
     socket.emit("joinRoom", {roomName:roomName}) ;
 }) ;
 
-socket.on("successfully join", ({roomName})=> {
+socket.on("successfully join", async ({roomName})=> {
     waitingPage.style.display = "none" ;
+    document.getElementById("navbar").style.display = "none" ;
+    await new Promise(resolve => {
+        let countdown = 4;
+        const delay = setInterval(() => {
+            countdown--;
+            document.getElementById("loadingIndicator").style.display = "block" ;
+            document.getElementById("loadingIndicator").textContent = countdown ;
+            
+            if (countdown === 0) {
+                clearInterval(delay);
+                resolve(); 
+            }
+        }, 1000);
+    });
+    document.getElementById("backLink").disabled = false ;
+    document.getElementById("loadingIndicator").style.display = "none" ;
     gamePage.style.display = "block" ;
     socket.emit("ready", {roomName:roomName}) ;
 })
@@ -192,6 +208,7 @@ socket.on('error', ()=>{
 
 
 socket.on("final", ({scores}) => {
+    document.getElementById("navbar").style.display = "block" ;
     scores.forEach(info => {
         if (info.socketId === socket.id) myScorePlace.textContent = info.score;
         else yourScorePlace.textContent = info.score;

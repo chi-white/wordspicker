@@ -86,6 +86,11 @@ const updateCategory = async() => {
 }
 
 const fillAccordion = async() => {
+    document.getElementById("loadingIndicator").style.display = 'block';
+    categorySelect.disabled = true;
+    chapterSelect.disabled = true;
+    document.getElementById("selectButton").disabled = true;
+
     accordion.innerHTML = "" ;
     let itemCount = 0 ;
     const words = await updateWords() ;
@@ -201,6 +206,11 @@ const fillAccordion = async() => {
         info.innerText = "No Data!" ;
         accordion.appendChild(info) ;
     }
+
+    document.getElementById("loadingIndicator").style.display = 'none';
+    categorySelect.disabled = false;
+    chapterSelect.disabled = false;
+    document.getElementById("selectButton").disabled = false;
     
 }
 
