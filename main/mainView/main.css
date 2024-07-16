@@ -1,0 +1,25 @@
+#test {
+  background-image: url('https://static.vecteezy.com/system/resources/previews/030/700/407/large_2x/elephant-wild-lifegraphy-hdr-4k-free-photo.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.8;
+  transition: opacity 0.5  ease;
+}
+
+#practice {
+  background-image: url('https://static.vecteezy.com/system/resources/previews/030/686/093/non_2x/dog-high-quality-hdr-16k-ultra-hd-free-photo.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.8;
+  transition: opacity 0.5  ease;
+}
+
+#doublegame {
+  background-image: url('https://static.vecteezy.com/system/resources/previews/030/696/047/large_2x/animals-high-quality-4k-hdr-free-photo.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.8;
+  transition: opacity 0.5  ease;
+}
+
+

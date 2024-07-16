@@ -1,0 +1,42 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  position: relative;
+  background-image: url('https://polarbear-world.com/wp-content/uploads/2024/01/how-far-can-polar-bears-smell-survey-fantastic-jpg.webp');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  opacity: 0.9;
+  color:rgb(255, 255, 255);
+}
+
+/* #background {
+  position: relative;
+  background-image: url('https://mrwallpaper.com/images/high/4k-eagle-in-mountains-3hx4ybfus71fibgd.webp');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  opacity: 0.8;
+  transition: opacity 0.5  ease;
+} */
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(100%); 
+    opacity: 0; 
+  }
+  50% {
+    opacity: 1; 
+  }
+  100% {
+    transform: translateY(0%); 
+    opacity: 0; 
+  }
+}
+
+
+.float-up {
+  animation: floatUp 3s ease-in-out; 
+}

@@ -1,0 +1,28 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  position: relative;
+  background-image: url('https://images2.alphacoders.com/110/1107391.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  opacity: 0.93;
+  
+}
+
+.vertical-line {
+  border-left: 2px solid lightgray; /* 設置垂直線的顏色和寬度 */
+  height: 100%; /* 設置高度為父元素的100% */
+}
+
+.chinese-sentence {
+  margin-left: 45px;
+}
+
+
+i{
+  color:red ;
+}
