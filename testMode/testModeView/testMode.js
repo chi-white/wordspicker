@@ -115,8 +115,24 @@ socket.on("inviteRoom", ({roomName})=>{
     socket.emit("joinRoom", {roomName:roomName}) ;
 }) ;
 
-socket.on("successfully join", ({roomName})=> {
+socket.on("successfully join", async({roomName})=> {
     selectPage.style.display = "none" ;
+    document.getElementById("navbar").style.display = "none" ;
+    await new Promise(resolve => {
+        let countdown = 4;
+        const delay = setInterval(() => {
+            countdown--;
+            document.getElementById("loadingIndicator").style.display = "block" ;
+            document.getElementById("loadingIndicator").textContent = countdown ;
+            
+            if (countdown === 0) {
+                clearInterval(delay);
+                resolve(); 
+            }
+        }, 1000);
+    });
+    document.getElementById("loadingIndicator").style.display = "none" ;
+
     testPage.style.display = "block" ;
     socket.emit("ready", {roomName:roomName}) ;
 })
@@ -184,6 +200,7 @@ socket.on('error', ()=>{
 
 
 socket.on("final", ({score}) => {
+    document.getElementById("navbar").style.display = "block" ;
     finalScoreShow.textContent = Math.round(score) ;
     tbody.innerHTML = " " ;
     record.forEach(item => {
@@ -210,25 +227,7 @@ const backTest = async() => {
     record = [] ;
     correct.classList.remove("float-up") ;
     index = 0 ;
-    const cook = await getCookie() ;
-    if(cook){
-        socket.connect() ;
-        connect = true ;
-
-        socket.emit("match", {
-            category : categorySelect.value,
-            chapter : chapterSelect.value,
-            type : questionTypeSelect.value,
-            mode : modeSelect.value,
-            token:cook
-        }) ;
-    }else{
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'NO token! Please register or log in!',
-        });
-    }
+    questionRequest() ;
     
 }  ;
 

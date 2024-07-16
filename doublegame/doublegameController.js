@@ -155,23 +155,13 @@ const startGame = (dgio, roomName, index) => {
       if (!roomQuestion[roomName] || !roomQuestion[roomName][index]) {
         throw new Error(`roomQuestion[${roomName}][${index}] is undefined`);
       }
-
-      // room.timer = setTimeout(() => {
-      //   endGame(
-      //     dgio,
-      //     roomName,
-      //     index,
-      //   );
-      //   resolve(); 
-      // }, 13000);
-
       let remainTime = 11;
 
       const interval = setInterval(() => {
         remainTime--;
         dgio.to(roomName).emit("timer", { timing: remainTime, index:index, roomName:roomName });
         
-        if (remainTime < -3||doubleAnscheck[roomName]===2) {
+        if (remainTime < -2||doubleAnscheck[roomName]===2) {
           clearInterval(interval);
           resolve() ;
         }
@@ -186,7 +176,6 @@ const startGame = (dgio, roomName, index) => {
       });
 
     } catch (error) {
-      console.log("ahahahahahahahahahahahahahahahahaha") ;
       dgio.to(roomName).emit("error");
       reject(error); 
     }

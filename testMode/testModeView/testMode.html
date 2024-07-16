@@ -11,7 +11,7 @@
 </head>
   <body>
     <div id="background" class="h-100">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow">
+        <nav id="navbar" class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow">
             <div class="container-fluid">
                 
                 <a href="#"  class="btn btn-outline-light border-0 me-2" onclick="back()">
@@ -26,6 +26,12 @@
                 
             </div>
         </nav>
+
+        <div class="d-flex justify-content-center align-items-center" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+            <div id="loadingIndicator" class="text-dark display-1" role="status" style="display: none;">
+              <span  class="visually-hidden">Loading...</span>
+            </div>
+        </div>
 
         <section id="selectPage"class="m-5 p-5" style="display:show">
             <div class="container-lg pt-5">
@@ -177,24 +183,6 @@
                                         </thead>
 
                                         <tbody id="t">
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td>apple</td>
-                                                <td>apple</td>
-                                                <td>Correct</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">2</th>
-                                                <td>pig</td>
-                                                <td>Page</td>
-                                                <td>Wrong</td>
-                                            </tr>
-                                            <tr  >
-                                                <th class="bg-danger" scope="row">3</th>
-                                                <td class="bg-danger">pig</td>
-                                                <td class="bg-danger">Pig</td>
-                                                <td class="bg-danger">Correct</td>
-                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
