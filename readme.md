@@ -15,8 +15,9 @@
 三次接答錯無法獲得該題分數。
 (英翻中 :完整輸入其中一個中文意思即算正確)
 使用者測驗結束之後使用者可以透過檢是作答紀錄來檢視自己的作答情況和反覆錯的單字。  
+![test3](https://github.com/user-attachments/assets/881de3ca-c9bb-4566-966f-1716ed4c134d)
 
-![test](https://github.com/user-attachments/assets/15f593d3-507c-476d-8faa-222d722ee41b)  
+
 
 ### Battle
 這是一個模仿知名手機遊戲知識王的功能。可以選擇測驗的種類與章節，一旦有另一人選定相同的範圍即開始進入戰鬥。競技模式給分標準:
@@ -25,7 +26,8 @@
 (英翻中 :完整輸入其中一個中文意思即算正確)。透過這種分是增加趣味性。  
 
     
-![battle](https://github.com/user-attachments/assets/056d8b83-033a-48ba-a3c8-d3e2133ab523)
+![battle (2)](https://github.com/user-attachments/assets/e9d46e45-91f3-4793-ad7c-700f1577baad)
+
 
 
 使用技術
@@ -40,6 +42,54 @@
 **Google OAuth2.0** : 提供使用者google 帳號登入的便捷登入方式。  
 **Socket** : 建立前端與後端伺服器之間的即時通訊，提供使用者在test與Battle中即時的互動與反饋。  
 **JWT** : 使用輕便的JWT作為使用者的令牌，配合cookie的儲存，可以識別使用者的身分。  
+
+安裝
+===  
+1. 複製至本地端<code>git clone https://github.com/chi-white/wordspicker.git</code>    
+2. 移動至wordspicker內，把資料夾內所有host變數改為"http://localhost:3000"  
+3. 安裝所有相依套件<code> npm install </code>  
+4. 啟動路由<code>nodemon router.js</code>
+5. 打開瀏覽器，訪問 http://localhost:3000
+
+配置
+===
+詳見.env_example    
+
+申請AWS RDS並將獲得的user name和密碼填入。
+<code>
+RDS_USER= AWS RDS user name
+RDS_PASSWORD= AWS RDS password
+</code>  
+
+jwt 密鑰  
+<code>JWT_SECRETKEY= jwt secret key</code>  
+
+至Google Cloud Platform "API與服務" 申請 "憑證" 中的網頁應用程的用戶端ID，填入用戶端ID與密碼
+<code>
+GOOGLE_CLIENT_ID= google gcp authentication client id
+GOOGLE_CLIENT_SECRET= google gcp authentication client secret
+</code>  
+
+檔案結構
+===
+**.github/workflows/aws.yaml** :github action 指令檔，負責上傳新版docker image以及在ec2拉新版code  
+**database** : 負責連接RDS，.sql為建置sql的架構  
+**router.js** : 管理所有api後端路由  
+**Dockerfile** : 建立Docker image  
+**Docker-compose.yaml** : 建立wordspicker前後端+nginx應用  
+**.env** : 隱密性環境變數，請參考.env_example  
+以下五個檔案，其中的view為bootstrap、js、css、html組成的靜態前端頁面；model直接與資料庫溝通；controller為前端與資料庫之間的邏輯操作  
+**user** : 使用者登入頁面  
+**main** : 登入之後的主頁面   
+**practice** : 管理Words Review頁面   
+**test** : 管理test頁面  
+**doublegame** : 管理Battle頁面  
+**token** : 管理身分識別，權限驗證
+
+
+
+
+
 
 
 
