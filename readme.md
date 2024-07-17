@@ -81,8 +81,8 @@ GOOGLE_CLIENT_SECRET= google gcp authentication client secret
 以下五個檔案，其中的view為bootstrap、js、css、html組成的靜態前端頁面；model直接與資料庫溝通；controller為前端與資料庫之間的邏輯操作  
 **user** : 使用者登入頁面，googlepassport檔案為google Oauth2.0的權限驗證
 **main** : 登入之後的主頁面   
-**practice** : 管理Words Review頁面   
-**test** : 管理test頁面  
+**practiceMode** : 管理Words Review頁面   
+**testMode** : 管理test頁面  
 **doublegame** : 管理Battle頁面  
 **token** : 管理身分識別，權限驗證
 
