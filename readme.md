@@ -51,6 +51,9 @@
 4. 啟動路由<code>nodemon router.js</code>
 5. 打開瀏覽器，訪問 http://localhost:3000
 
+   ![image](https://github.com/user-attachments/assets/43fd902f-de45-4dd0-b44e-2e581c994cf3)
+
+
 配置
 ===
 詳見.env_example    
